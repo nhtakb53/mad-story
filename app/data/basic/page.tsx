@@ -42,98 +42,104 @@ export default function BasicInfoPage() {
   }
 
   return (
-    <div className="p-8 max-w-4xl">
-      <h1 className="text-3xl font-bold mb-6">기본사항</h1>
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <label className="block text-sm font-medium mb-2">이름 *</label>
-          <input
-            type="text"
-            required
-            value={formData.name}
-            onChange={(e) => handleChange("name", e.target.value)}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-          />
+    <div className="p-4 max-w-4xl">
+      <h1 className="text-xl font-bold mb-4">기본사항</h1>
+      <form onSubmit={handleSubmit} className="space-y-3">
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-xs font-medium mb-1">이름 *</label>
+            <input
+              type="text"
+              required
+              value={formData.name}
+              onChange={(e) => handleChange("name", e.target.value)}
+              className="w-full px-2 py-1.5 text-sm border rounded focus:outline-none focus:ring-1 focus:ring-primary"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium mb-1">영문 이름</label>
+            <input
+              type="text"
+              value={formData.nameEn || ""}
+              onChange={(e) => handleChange("nameEn", e.target.value)}
+              className="w-full px-2 py-1.5 text-sm border rounded focus:outline-none focus:ring-1 focus:ring-primary"
+            />
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-xs font-medium mb-1">이메일 *</label>
+            <input
+              type="email"
+              required
+              value={formData.email}
+              onChange={(e) => handleChange("email", e.target.value)}
+              className="w-full px-2 py-1.5 text-sm border rounded focus:outline-none focus:ring-1 focus:ring-primary"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium mb-1">전화번호 *</label>
+            <input
+              type="tel"
+              required
+              value={formData.phone}
+              onChange={(e) => handleChange("phone", e.target.value)}
+              className="w-full px-2 py-1.5 text-sm border rounded focus:outline-none focus:ring-1 focus:ring-primary"
+            />
+          </div>
+        </div>
+        <div className="grid grid-cols-3 gap-3">
+          <div>
+            <label className="block text-xs font-medium mb-1">GitHub</label>
+            <input
+              type="url"
+              value={formData.github || ""}
+              onChange={(e) => handleChange("github", e.target.value)}
+              className="w-full px-2 py-1.5 text-sm border rounded focus:outline-none focus:ring-1 focus:ring-primary"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium mb-1">블로그</label>
+            <input
+              type="url"
+              value={formData.blog || ""}
+              onChange={(e) => handleChange("blog", e.target.value)}
+              className="w-full px-2 py-1.5 text-sm border rounded focus:outline-none focus:ring-1 focus:ring-primary"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium mb-1">LinkedIn</label>
+            <input
+              type="url"
+              value={formData.linkedin || ""}
+              onChange={(e) => handleChange("linkedin", e.target.value)}
+              className="w-full px-2 py-1.5 text-sm border rounded focus:outline-none focus:ring-1 focus:ring-primary"
+            />
+          </div>
         </div>
         <div>
-          <label className="block text-sm font-medium mb-2">영문 이름</label>
-          <input
-            type="text"
-            value={formData.nameEn || ""}
-            onChange={(e) => handleChange("nameEn", e.target.value)}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-2">이메일 *</label>
-          <input
-            type="email"
-            required
-            value={formData.email}
-            onChange={(e) => handleChange("email", e.target.value)}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-2">전화번호 *</label>
-          <input
-            type="tel"
-            required
-            value={formData.phone}
-            onChange={(e) => handleChange("phone", e.target.value)}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-2">GitHub</label>
-          <input
-            type="url"
-            value={formData.github || ""}
-            onChange={(e) => handleChange("github", e.target.value)}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-2">블로그</label>
-          <input
-            type="url"
-            value={formData.blog || ""}
-            onChange={(e) => handleChange("blog", e.target.value)}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-2">LinkedIn</label>
-          <input
-            type="url"
-            value={formData.linkedin || ""}
-            onChange={(e) => handleChange("linkedin", e.target.value)}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-2">자기소개</label>
+          <label className="block text-xs font-medium mb-1">자기소개</label>
           <textarea
             value={formData.introduce || ""}
             onChange={(e) => handleChange("introduce", e.target.value)}
-            rows={6}
+            rows={4}
             placeholder="INTRODUCE 섹션에 표시될 자기소개를 입력하세요"
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full px-2 py-1.5 text-sm border rounded focus:outline-none focus:ring-1 focus:ring-primary"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-2">프로필 이미지 URL</label>
+          <label className="block text-xs font-medium mb-1">프로필 이미지 URL</label>
           <input
             type="url"
             value={formData.profileImage || ""}
             onChange={(e) => handleChange("profileImage", e.target.value)}
             placeholder="https://example.com/profile.jpg"
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full px-2 py-1.5 text-sm border rounded focus:outline-none focus:ring-1 focus:ring-primary"
           />
         </div>
         <button
           type="submit"
-          className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
+          className="px-4 py-1.5 text-sm bg-primary text-primary-foreground rounded hover:bg-primary/90"
         >
           저장
         </button>

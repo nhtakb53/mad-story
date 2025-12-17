@@ -4,21 +4,13 @@ import path from "path";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 
-const FILE_MAP: Record<string, string> = {
-  "basic-info": "basic-info.json",
-  careers: "careers.json",
-  skills: "skills.json",
-  educations: "educations.json",
-  projects: "projects.json",
-};
-
 export async function GET(
   request: NextRequest,
-  { params }: { params: { type: string } }
+  context: { params: Promise<{ type: string }> }
 ) {
   try {
-    const { type } = params;
-    const fileName = FILE_MAP[type];
+    const { type } = await context.params;
+    const fileName = `${type}.json`;
 
     if (!fileName) {
       return NextResponse.json({ error: "Invalid data type" }, { status: 400 });
@@ -37,11 +29,11 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { type: string } }
+  context: { params: Promise<{ type: string }> }
 ) {
   try {
-    const { type } = params;
-    const fileName = FILE_MAP[type];
+    const { type } = await context.params;
+    const fileName = `${type}.json`;
 
     if (!fileName) {
       return NextResponse.json({ error: "Invalid data type" }, { status: 400 });

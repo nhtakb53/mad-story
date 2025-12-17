@@ -64,50 +64,57 @@ export default function ResumePage() {
   const ResumeContent = () => (
     <div className="a4-page bg-white shadow-lg">
       {selectedSections.basic && (
-        <div className="flex items-start gap-6 mb-8 pb-6 border-b-2">
-          {basicInfo.profileImage && (
-            <img
-              src={basicInfo.profileImage}
-              alt={basicInfo.name}
-              className="w-32 h-32 rounded-lg object-cover"
-            />
-          )}
-          <div className="flex-1">
-            <h1 className="text-4xl font-bold text-blue-600 mb-1">
-              {basicInfo.name || "이름 없음"} {basicInfo.nameEn && `(${basicInfo.nameEn})`}
-            </h1>
-            <div className="flex gap-4 text-sm mt-3">
-              {basicInfo.email && (
-                <div className="flex items-center gap-1">
-                  <span>✉</span>
-                  <a href={`mailto:${basicInfo.email}`} className="hover:underline">
-                    {basicInfo.email}
-                  </a>
-                </div>
+        <div className="mb-6 pb-4 border-b-2 border-gray-800">
+          <div className="flex items-start gap-4">
+            {basicInfo.profileImage && (
+              <img
+                src={basicInfo.profileImage}
+                alt={basicInfo.name}
+                className="w-20 h-20 rounded object-cover"
+              />
+            )}
+            <div className="flex-1">
+              <h1 className="text-2xl font-bold text-gray-900 mb-0.5 tracking-tight">
+                {basicInfo.name || "이름 없음"}
+              </h1>
+              {basicInfo.nameEn && (
+                <p className="text-sm text-gray-600 mb-2">{basicInfo.nameEn}</p>
               )}
-              {basicInfo.phone && (
-                <div className="flex items-center gap-1">
-                  <span>☎</span>
-                  <span>{basicInfo.phone}</span>
-                </div>
-              )}
+              <div className="flex flex-col gap-0.5 text-xs text-gray-700">
+                {basicInfo.email && (
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium">Email</span>
+                    <a href={`mailto:${basicInfo.email}`} className="hover:text-gray-900">
+                      {basicInfo.email}
+                    </a>
+                  </div>
+                )}
+                {basicInfo.phone && (
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium">Phone</span>
+                    <span>{basicInfo.phone}</span>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
       )}
 
       {selectedSections.introduce && basicInfo.introduce && (
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-blue-600 mb-4">INTRODUCE</h2>
-          <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{basicInfo.introduce}</p>
+        <div className="mb-6">
+          <h2 className="text-base font-bold text-gray-900 mb-2 pb-1.5 border-b border-gray-300">소개</h2>
+          <p className="text-xs text-gray-700 leading-relaxed whitespace-pre-wrap">{basicInfo.introduce}</p>
         </div>
       )}
 
       {selectedSections.career && careers.length > 0 && (
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-blue-600 mb-1">EXPERIENCE</h2>
-          <p className="text-sm text-gray-600 mb-4">총 {years}년 {months}개월</p>
-          <div className="space-y-6">
+        <div className="mb-6">
+          <div className="flex justify-between items-end mb-2 pb-1.5 border-b border-gray-300">
+            <h2 className="text-base font-bold text-gray-900">경력</h2>
+            <p className="text-xs bg-gray-800 text-white px-2 py-0.5 rounded font-medium">총 {years}년 {months}개월</p>
+          </div>
+          <div className="space-y-4">
             {careers.map((career) => {
               const start = new Date(career.startDate);
               const end = career.current ? new Date() : new Date(career.endDate);
@@ -116,29 +123,37 @@ export default function ResumePage() {
               const careerRemainingMonths = careerMonths % 12;
 
               return (
-                <div key={career.id} className="border-l-4 border-blue-600 pl-4">
+                <div key={career.id} className="pl-3 border-l-2 border-gray-800 bg-gray-50/30 pb-3 pt-2">
                   <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <p className="text-sm text-gray-600">
+                    <div className="flex-1">
+                      <h3 className="text-sm font-bold text-gray-900">{career.company}</h3>
+                      <p className="text-xs text-gray-700 font-medium mt-0.5">{career.position}</p>
+                    </div>
+                    <div className="ml-4 flex flex-col items-end gap-0.5">
+                      <span className="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded font-medium whitespace-nowrap">
                         {career.startDate} ~ {career.current ? "현재" : career.endDate}
-                      </p>
-                      <p className="text-xs text-blue-600 font-medium">
+                      </span>
+                      <span className="text-xs bg-gray-800 text-white px-2 py-0.5 rounded font-medium">
                         {careerYears}년 {careerRemainingMonths}개월
-                      </p>
+                      </span>
                     </div>
                   </div>
-                  <h3 className="text-xl font-bold">{career.company}</h3>
-                  <p className="text-gray-700 font-medium mb-2">{career.position}</p>
-                  {career.description && <p className="text-gray-700 mb-3 leading-relaxed">{career.description}</p>}
+                  {career.description && (
+                    <div className="mb-3 pb-2 border-b border-gray-200">
+                      <p className="text-xs text-gray-700 leading-relaxed">{career.description}</p>
+                    </div>
+                  )}
                   {career.achievements.length > 0 && (
-                    <ul className="space-y-1 text-sm text-gray-700">
-                      {career.achievements.map((achievement, index) => (
-                        <li key={index} className="flex">
-                          <span className="mr-2">•</span>
-                          <span>{achievement}</span>
-                        </li>
-                      ))}
-                    </ul>
+                    <div className="bg-white/50 rounded p-2 border border-gray-100">
+                      <ul className="space-y-1.5 text-xs text-gray-700">
+                        {career.achievements.map((achievement, index) => (
+                          <li key={index} className="flex items-start">
+                            <span className="mr-2 text-gray-400 font-bold leading-none mt-0.5">•</span>
+                            <span className="flex-1">{achievement}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   )}
                 </div>
               );
@@ -148,27 +163,27 @@ export default function ResumePage() {
       )}
 
       {selectedSections.skills && Object.keys(groupedSkills).length > 0 && (
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-blue-600 mb-4">SKILL</h2>
-          <div className="bg-gray-50 p-4 rounded-lg mb-4">
-            <div className="space-y-1 text-xs text-gray-600">
-              <p><span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-600 text-white font-bold mr-2">3</span>{getLevelText(3)}</p>
-              <p><span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-600 text-white font-bold mr-2">2</span>{getLevelText(2)}</p>
-              <p><span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-600 text-white font-bold mr-2">1</span>{getLevelText(1)}</p>
+        <div className="mb-6">
+          <h2 className="text-base font-bold text-gray-900 mb-2 pb-1.5 border-b border-gray-300">보유 기술</h2>
+          <div className="bg-gray-50 p-2 rounded mb-2">
+            <div className="space-y-0.5 text-xs text-gray-600">
+              <p><span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-gray-800 text-white font-bold mr-1.5 text-xs">3</span>{getLevelText(3)}</p>
+              <p><span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-gray-800 text-white font-bold mr-1.5 text-xs">2</span>{getLevelText(2)}</p>
+              <p><span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-gray-800 text-white font-bold mr-1.5 text-xs">1</span>{getLevelText(1)}</p>
             </div>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-2">
             {Object.entries(groupedSkills).map(([category, categorySkills]) => (
-              <div key={category} className="flex">
-                <div className="w-32 font-bold text-gray-700">{category}</div>
+              <div key={category} className="flex gap-3">
+                <div className="w-20 font-bold text-xs text-gray-900">{category}</div>
                 <div className="flex-1">
-                  <div className="flex flex-wrap gap-3">
+                  <div className="flex flex-wrap gap-2">
                     {categorySkills.map((skill) => (
                       <div key={skill.id} className="flex items-center gap-1">
-                        <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-600 text-white text-xs font-bold">
+                        <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-gray-800 text-white text-xs font-bold">
                           {skill.level}
                         </span>
-                        <span className="text-sm">{skill.name}</span>
+                        <span className="text-xs text-gray-700">{skill.name}</span>
                       </div>
                     ))}
                   </div>
@@ -180,17 +195,19 @@ export default function ResumePage() {
       )}
 
       {selectedSections.education && educations.length > 0 && (
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-blue-600 mb-4">EDUCATION</h2>
+        <div className="mb-6">
+          <h2 className="text-base font-bold text-gray-900 mb-2 pb-1.5 border-b border-gray-300">학력</h2>
           <div className="space-y-3">
             {educations.map((education) => (
-              <div key={education.id} className="flex justify-between items-start">
+              <div key={education.id} className="flex justify-between items-start bg-gray-50/30 p-2 rounded border border-gray-100">
                 <div>
-                  <p className="text-sm text-gray-600">{education.startDate} ~ {education.endDate}</p>
-                  <h3 className="font-bold">{education.school}</h3>
-                  <p className="text-sm text-gray-700">{education.major} / {education.degree}</p>
-                  {education.gpa && <p className="text-sm text-gray-600">학점: {education.gpa}</p>}
+                  <h3 className="font-bold text-xs text-gray-900">{education.school}</h3>
+                  <p className="text-xs text-gray-700 mt-0.5">{education.major} / {education.degree}</p>
+                  {education.gpa && <p className="text-xs text-gray-600 mt-0.5">학점: {education.gpa}</p>}
                 </div>
+                <span className="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded font-medium whitespace-nowrap ml-2">
+                  {education.startDate} ~ {education.endDate}
+                </span>
               </div>
             ))}
           </div>
@@ -198,25 +215,29 @@ export default function ResumePage() {
       )}
 
       {selectedSections.projects && projects.length > 0 && (
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-blue-600 mb-4">PROJECT</h2>
-          <div className="space-y-6">
+        <div className="mb-6">
+          <h2 className="text-base font-bold text-gray-900 mb-2 pb-1.5 border-b border-gray-300">프로젝트</h2>
+          <div className="space-y-4">
             {projects.map((project) => (
-              <div key={project.id} className="border-l-4 border-blue-600 pl-4">
+              <div key={project.id} className="pl-3 border-l-2 border-gray-800 bg-gray-50/30 pb-3 pt-2">
                 <div className="flex justify-between items-start mb-2">
-                  <div>
-                    <p className="text-sm text-gray-600">{project.startDate} ~ {project.endDate}</p>
-                    <h3 className="text-xl font-bold">{project.name}</h3>
-                    <p className="text-sm text-gray-600 italic">{project.role}</p>
+                  <div className="flex-1">
+                    <h3 className="text-sm font-bold text-gray-900">{project.name}</h3>
+                    <p className="text-xs text-gray-700 font-medium mt-0.5">{project.role}</p>
                   </div>
+                  <span className="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded font-medium whitespace-nowrap ml-2">
+                    {project.startDate} ~ {project.endDate}
+                  </span>
                 </div>
-                <p className="text-gray-700 mb-2">{project.description}</p>
+                <div className="mb-3 pb-2 border-b border-gray-200">
+                  <p className="text-xs text-gray-700 leading-relaxed">{project.description}</p>
+                </div>
                 {project.techStack.length > 0 && (
-                  <div className="mb-2">
-                    <span className="font-semibold text-sm">Skill Keywords: </span>
-                    <div className="inline-flex flex-wrap gap-1">
+                  <div className="mb-3 pb-2 border-b border-gray-200">
+                    <span className="font-semibold text-xs text-gray-900 block mb-1.5">기술스택</span>
+                    <div className="flex flex-wrap gap-1">
                       {project.techStack.map((tech, idx) => (
-                        <span key={idx} className="bg-gray-700 text-white px-2 py-0.5 rounded text-xs">
+                        <span key={idx} className="bg-gray-800 text-white px-1.5 py-0.5 rounded text-xs">
                           {tech}
                         </span>
                       ))}
@@ -224,14 +245,16 @@ export default function ResumePage() {
                   </div>
                 )}
                 {project.achievements.length > 0 && (
-                  <ul className="space-y-1 text-sm text-gray-700">
-                    {project.achievements.map((achievement, index) => (
-                      <li key={index} className="flex">
-                        <span className="mr-2">•</span>
-                        <span>{achievement}</span>
-                      </li>
-                    ))}
-                  </ul>
+                  <div className="bg-white/50 rounded p-2 border border-gray-100">
+                    <ul className="space-y-1.5 text-xs text-gray-700">
+                      {project.achievements.map((achievement, index) => (
+                        <li key={index} className="flex items-start">
+                          <span className="mr-2 text-gray-400 font-bold leading-none mt-0.5">•</span>
+                          <span className="flex-1">{achievement}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 )}
               </div>
             ))}
