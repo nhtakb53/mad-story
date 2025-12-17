@@ -1,1 +1,286 @@
-[]
+[
+  {
+    "id": "1",
+    "name": "Content Cube - Asset Cube 통합 프로젝트",
+    "description": "자산 관리 시스템인 AssetCube와 Content Cube(Headless CMS) 제품을 통합하여 하나의 제품으로 만들기 위한 프로젝트",
+    "startDate": "2024-01",
+    "endDate": "2024-05",
+    "role": "백엔드 개발자",
+    "techStack": ["Java", "Spring Boot", "MySQL", "Closure Table", "SSE"],
+    "achievements": [
+      "폴더 및 북마크 기능, 파일 업로더를 개선, 기존 업로더 구조의 불필요한 부분들을 버리고 컴팩트하게 재구성",
+      "기존 계층 저장구조를 버리고 Closure 테이블을 사용하여 상하위 폴더 조회시 속도를 개선",
+      "업로드 완료 후 변환 요청 완료 시에 SSE 이벤트를 보내도록 처리"
+    ],
+    "url": ""
+  },
+  {
+    "id": "2",
+    "name": "한국미드아마추어골프연맹 ContentCube 구축",
+    "description": "Headless CMS를 사용한 골프연맹 홈페이지의 관리 시스템 구축 프로젝트",
+    "startDate": "2023-10",
+    "endDate": "2023-12",
+    "role": "백엔드 개발자",
+    "techStack": ["Java", "Spring Boot", "MySQL", "RestAPI"],
+    "achievements": [
+      "기존 시스템을 분석하여 선수들의 대회 경기 결과 관리 및 각 대회별 랭킹 관리, 시즌 랭킹 집계에 대한 기능을 RestAPI로 설계 및 구현",
+      "대회 참가비 및 정회원 회비 결제를 위한 결제 대행사 API 연동 작업 진행하였으며 신뢰성 높은 구현을 위해 안정적인 구조로 설계"
+    ],
+    "url": ""
+  },
+  {
+    "id": "3",
+    "name": "ContentCube(Headless CMS) 개발 프로젝트",
+    "description": "기존 CMS 기능을 보완한 Headless CMS 개발 프로젝트",
+    "startDate": "2023-06",
+    "endDate": "2023-09",
+    "role": "백엔드 개발자",
+    "techStack": ["Java", "Spring Boot", "MySQL", "JPA", "Hibernate", "JOOQ", "GitLab CI/CD", "Docker"],
+    "achievements": [
+      "JPA, Hibernate, JOOQ 를 사용하여 서버의 재시작 없이 동적 테이블을 생성 가능하도록 설계",
+      "컨텐트 버전 관리, 권한 관리, 컴포넌트 필드 구조 및 스키마 설계 및 기능 구현",
+      "GitLab CI/CD, Docker 를 사용하여 Blue/Green 무중단 배포 방식 적용"
+    ],
+    "url": ""
+  },
+  {
+    "id": "4",
+    "name": "삼성SDS 운영 유지보수",
+    "description": "Oracle 19c 업그레이드 대응 및 시스템 성능 최적화",
+    "startDate": "2023-05",
+    "endDate": "2023-06",
+    "role": "백엔드 개발자",
+    "techStack": ["Oracle", "AWS", "Google Lighthouse"],
+    "achievements": [
+      "Oracle 19c 업그레이드 대응을 위해 데이터 이관 및 검증 작업 진행",
+      "Slow Query 속도 개선에 Oracle 스케줄러를 사용하여 시스템 사용도가 낮은 새벽 시간에 실행되도록 변경",
+      "WEB/WAS 서버의 미사용 Security Group(방화벽 정책 그룹) 식별 및 제거",
+      "Google Lighthouse를 사용하여 페이지 성능 최적화 분석 및 작업 가이드 작성"
+    ],
+    "url": ""
+  },
+  {
+    "id": "5",
+    "name": "이투스에듀 CMS 구축",
+    "description": "레거시 홈페이지 관리 시스템을 분석하여 CMS + REST API 형태의 시스템으로 구축하는 프로젝트",
+    "startDate": "2023-03",
+    "endDate": "2023-04",
+    "role": "백엔드 개발자",
+    "techStack": ["Java", "Spring Framework", "RestAPI"],
+    "achievements": [
+      "분석 단계에서 업무 범위에 대한 협의점이 맞지 않아 중도 철수"
+    ],
+    "url": ""
+  },
+  {
+    "id": "6",
+    "name": "AssetCube-ICS 연동 개발",
+    "description": "신규 개발한 자산 관리 시스템인 AssetCube 에서 기존 CMS 시스템의 File Receiver Agent 로 파일을 전송하기 위해 연동 기능 개발",
+    "startDate": "2023-01",
+    "endDate": "2023-02",
+    "role": "백엔드 개발자",
+    "techStack": ["Java", "CompletableFuture", "Jenkins", "GitLab CI/CD"],
+    "achievements": [
+      "CompletableFuture 를 사용하여 비동기로 작업이 진행되도록 처리",
+      "CI/CD 도구를 기존에 사용하던 Jenkins 에서 GitLab CI/CD 로 전환하여 사용"
+    ],
+    "url": ""
+  },
+  {
+    "id": "7",
+    "name": "아모레퍼시픽 AP 사이트 개편",
+    "description": "검색 엔진과의 데이터 연동을 위해 AP 브랜드의 데이터를 정제하여 각 언어별 뷰테이블 제공",
+    "startDate": "2022-12",
+    "endDate": "2023-01",
+    "role": "백엔드 개발자",
+    "techStack": ["Oracle", "PostgreSQL"],
+    "achievements": [
+      "기존 Oracle 로 작성된 데이터 수집 쿼리를 분석하고 PostgreSQL 로 포팅",
+      "전체 데이터 re-index 진행되는 동안 검색 안되는 이슈를 구조 개선으로 해결"
+    ],
+    "url": ""
+  },
+  {
+    "id": "8",
+    "name": "대구은행 CMS 업그레이드",
+    "description": "구 버전의 CMS를 최신 버전으로 업그레이드 및 신규 서버로 이전 설치",
+    "startDate": "2022-09",
+    "endDate": "2022-11",
+    "role": "백엔드 개발자",
+    "techStack": ["Oracle", "WebToB", "JEUS"],
+    "achievements": [
+      "Oracle 19c 버전 업그레이드 대응을 위해 데이터베이스 이관 및 데이터 검증",
+      "WebToB, JEUS 환경으로 포팅을 위한 트러블 슈팅을 진행하였고 테스트 환경 구축 및 사전 시나리오 전체를 검증",
+      "JEUS의 Datasource 사용 시 Connection close 이슈 해결"
+    ],
+    "url": ""
+  },
+  {
+    "id": "9",
+    "name": "삼성카드 통합플랫폼 구축 프로젝트",
+    "description": "삼성카드의 레거시 CMS(PHP 기반) 기능을 자사 CMS(Java Struts 기반) 기능으로 통합하는 Win-back 프로젝트",
+    "startDate": "2021-07",
+    "endDate": "2022-08",
+    "role": "백엔드 개발자",
+    "techStack": ["Java", "Apache Struts", "Velocity", "Oracle", "Shell Script"],
+    "achievements": [
+      "컨텐츠를 목록 페이지에서 보여주는 각 필드가 상이하여 요청시 선택한 필드를 지정 방식으로 변경하여 성능 개선",
+      "Velocity 문법을 사용하여 화면을 구성하였고 데이터의 구조 분석 및 실제 사용성을 고려하여 최적의 결과를 만들기 위해 적극적으로 의견을 어필",
+      "레거시 시스템의 IF 포인트를 분석하고 reflection 을 활용한 자사 CMS 의 연동 모듈에 추가하였고 백만건의 기존 데이터에 대해 형태를 정제하여 마이그레이션 진행",
+      "다수 서버 포트 스캔, 배포 서버 상태 확인 및 일괄 변경 등 반복적인 작업을 자동화하는 스크립트를 자발적으로 개발하고 사용법을 공유"
+    ],
+    "url": ""
+  },
+  {
+    "id": "10",
+    "name": "신한카드 CMS 서버 통합 마이그레이션 프로젝트",
+    "description": "두개의 시스템에 존재하는 컨텐츠를 하나의 CMS로 통합하기 위한 작업",
+    "startDate": "2021-05",
+    "endDate": "2021-06",
+    "role": "백엔드 개발자",
+    "techStack": ["JavaScript", "ES6", "Web Worker", "Oracle", "RestAPI"],
+    "achievements": [
+      "ES6 기반의 바닐라 Javascript만을 사용해 데이터 이관 프로그램 개발",
+      "작업 향상을 위해 Web Worker 를 사용한 멀티스레드 방식으로 진행하여 API 동시 호출",
+      "기존 데이터의 순서가 섞이지 않도록 하기위해 Batch size 를 정하고 Oracle 의 Sequence 를 미리 부여하는 방식을 사용"
+    ],
+    "url": ""
+  },
+  {
+    "id": "11",
+    "name": "삼성 SDS 닷컴 2020 개편 프로젝트",
+    "description": "삼성 SDS 닷컴 홈페이지 2020 리뉴얼 프로젝트의 백엔드 개발",
+    "startDate": "2020-07",
+    "endDate": "2021-04",
+    "role": "백엔드 개발자",
+    "techStack": ["Java", "Apache Struts", "WebSocket", "ElasticSearch"],
+    "achievements": [
+      "Java, Apache Struts 기반 ICS(컨텐츠 관리 시스템)-IDS(배포 관리 시스템) 간 배포 연동 부분 개선",
+      "WebSocket을 사용하여 현재 사용자가 실행한 배포작업에 대한 로그를 실시간으로 확인 할 수 있도록 처리",
+      "리뉴얼 된 카테고리를 분석하여 통합 검색 데이터 및 3개의 메뉴별 검색에 대한 데이터를 정제하고 ElasticSearch에 전달",
+      "기존 통합검색 페이지 구성과 구조를 리팩토링하여 속도를 개선",
+      "XSS, SQL Injection, 평문 데이터 암호화, 비밀번호 암호화 방식 변경(SHA256) 등 보안 취약점 조치"
+    ],
+    "url": ""
+  },
+  {
+    "id": "12",
+    "name": "AssetCube 1.0 고도화 프로젝트",
+    "description": "Spring Boot, PostgreSQL, Vue.js로 구성된 AssetCube 시스템의 파일/폴더 업로더 설계 및 구현",
+    "startDate": "2020-01",
+    "endDate": "2020-06",
+    "role": "백엔드 개발자",
+    "techStack": ["Spring Boot", "PostgreSQL", "Vue.js", "WebSocket", "Chunk Upload"],
+    "achievements": [
+      "Chunk 방식을 채택하여 업로드 성능과 유연성을 높임",
+      "단일 파일 업로드/폴더 업로드, 드래그 앤 드랍 업로드(파일/폴더) 기능 구현",
+      "파일/폴더 업로드 시 일시정지/재개/취소/전체일시정지/전체재개/전체취소 기능 구현",
+      "zip 등의 압축 파일 업로드 시 사용자 선택으로 client-side 에서 압축 해제 후 내부 파일/폴더만 업로드 기능 구현",
+      "업로드 완료 및 썸네일 등 자산 변환 완료 시 Client 에게 WebSocket으로 완료 정보를 전달"
+    ],
+    "url": ""
+  },
+  {
+    "id": "13",
+    "name": "아모레퍼시픽 브랜드 사이트 마이그레이션 프로젝트",
+    "description": "Java, Spring Boot, Vue.js, PostgreSQL 기반의 각 브랜드 어드민을 관리하는 관리 사이트를 구축하고 정보를 제공하는 RestAPI 개발",
+    "startDate": "2019-01",
+    "endDate": "2019-12",
+    "role": "백엔드 개발자",
+    "techStack": ["Java", "Spring Boot", "Vue.js", "PostgreSQL", "SSR", "Oracle"],
+    "achievements": [
+      "Vue.js 를 사용한 어드민 사이트는 SPA 구조로 진행하였으며 SSR 방식으로 구현하여 렌더링 속도를 향상",
+      "5개의 레거시 브랜드 사이트 및 데이터 구조를 분석하여 CMS/브랜드 어드민/API 데이터로 통합하는 마이그레이션 진행",
+      "PostgreSQL에서는 JSON Field를 적절히 사용하여 간략한 테이블 구조를 가져감으로써 개발 생산성을 높임"
+    ],
+    "url": ""
+  },
+  {
+    "id": "14",
+    "name": "삼성 SDS 홈페이지 CMS 고도화 개발",
+    "description": "Spring Framework, MyBatis 를 사용하여 홈페이지 개인화 영역(추천 페이지, 방문한 페이지, 자주 방문한 페이지) 기능 API 어플리케이션 개발",
+    "startDate": "2018-11",
+    "endDate": "2018-12",
+    "role": "백엔드 개발자",
+    "techStack": ["Spring Framework", "MyBatis", "ElasticSearch"],
+    "achievements": [
+      "추가된 기능에 대한 검색 데이터를 정제하여 검색 엔진에 제공",
+      "기존에 제공되던 검색 데이터 중 Row aggregation 되어 성능 문제가 발생하던 부분의 문제를 개선하여 쿼리 성능을 향상"
+    ],
+    "url": ""
+  },
+  {
+    "id": "15",
+    "name": "하나은행 IDS 배포시스템 업그레이드 프로젝트",
+    "description": "하나은행의 Oracle 12c 업그레이드에 대응하여 CMS 및 배포시스템의 버전 업데이트 패치 적용",
+    "startDate": "2018-10",
+    "endDate": "2018-11",
+    "role": "백엔드 개발자",
+    "techStack": ["Oracle", "Java"],
+    "achievements": [
+      "데이터 이관 및 유저/그룹 정보 마이그레이션 작업을 진행",
+      "File Receiver Agent 에 대한 확장자 필터링 기능을 Config 기반으로 개발 및 테스트하고 n개의 서버에 적용"
+    ],
+    "url": ""
+  },
+  {
+    "id": "16",
+    "name": "아모레퍼시픽 CMS 구축",
+    "description": "CMS 제품의 기존 지원 사양 외 WAS 환경인 IBM WebSphere 로 포팅",
+    "startDate": "2018-08",
+    "endDate": "2018-09",
+    "role": "백엔드 개발자",
+    "techStack": ["IBM WebSphere", "Unix", "Apache JMeter"],
+    "achievements": [
+      "WebSphere 포팅 과정에서 Query String 전달 문제, 무한 redirect 문제에 대해 트러블슈팅하고 해결",
+      "Apache JMeter 를 사용한 홈페이지 부하 테스트를 진행하였으며 기존 레거시 시스템 대비 높아진 접속 트래픽을 견뎌낼 수 있음을 고객에게 증명"
+    ],
+    "url": ""
+  },
+  {
+    "id": "17",
+    "name": "신세계 백화점 CMS 기능 고도화",
+    "description": "Java, Apache Struts 기반의 자산 관리 시스템의 커스텀 코드 관리 기능, 불필요 하거나 기간이 만료된 자산에 대해 삭제를 진행하는 배치 프로세스 추가 개발",
+    "startDate": "2018-05",
+    "endDate": "2018-07",
+    "role": "백엔드 개발자",
+    "techStack": ["Java", "Apache Struts", "Oracle", "Infinispan", "Apache JMeter"],
+    "achievements": [
+      "이중화 된 자산관리 시스템으로 타 시스템의 연동 데이터 대량 입력 요청 시 Infinispan replication 이슈 트러블 슈팅 개선",
+      "약 3억 row 의 자산 필드 테이블에 대한 오라클 인덱스 구조를 개선하였으며 미디어 변환 시스템으로 자산을 변환 요청시 병목 현상을 개선",
+      "Apache JMeter 를 사용하여 부하 테스트 진행하고 이전 시스템 대비 높아진 안정성을 증명"
+    ],
+    "url": ""
+  },
+  {
+    "id": "18",
+    "name": "서울시교육청 교육지원청 홈페이지 통합 시스템 구축",
+    "description": "서울시교육청에 CMS 시스템을 신규 구축하고 각 교육지원청의 데이터를 데이터베이스화 하는 프로젝트",
+    "startDate": "2016-10",
+    "endDate": "2016-12",
+    "role": "백엔드 개발자",
+    "techStack": ["Java", "SOAP", "ElasticSearch"],
+    "achievements": [
+      "업/다운로더 기능 및 사용자 편의 기능을 개선 하였으며 카테고리 구조를 분석하고 검색 엔진 데이터를 제공",
+      "Java Service Wrapper 의 logging 버그로 인한 OOM 이슈 트러블슈팅 및 해결",
+      "SOAP 방식의 인터페이스를 사용하여 운영 중 추가 되는 데이터에 대한 마이그레이션 도구를 개발하였으며 가이드를 작성하여 배포"
+    ],
+    "url": ""
+  },
+  {
+    "id": "19",
+    "name": "국립고궁박물관 디지털 자산 관리시스템 고도화 개발",
+    "description": "Java, Apache Struts 기반의 디지털 자산 관리 시스템 고도화 개발",
+    "startDate": "2015-06",
+    "endDate": "2016-02",
+    "role": "백엔드 개발자",
+    "techStack": ["Java", "Apache Struts", "Oracle"],
+    "achievements": [
+      "기존에 구축된 시스템에서 자산 정보를 엑셀로 Export 하고 통계 정보를 PDF 형태로 다운로드 하는 기능을 개발",
+      "추가 10TB 용량의 디지털 형태 자산을 Oracle로 데이터베이스화 하였으며 마이그레이션 도구의 버그 수정 진행",
+      "자산 관리 시스템과 3rd Party 시스템 연동(문서 뷰어, 미디어 변환 엔진, 업다운로드 모듈, 검색 엔진) 데이터 제공",
+      "WEB/WAS 취약점, 파일 업/다운로드 취약점, SQL Injection, XSS 취약점 보완"
+    ],
+    "url": ""
+  }
+]
