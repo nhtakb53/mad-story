@@ -4,6 +4,7 @@ import { useFileStorage } from "@/hooks/useFileStorage";
 import { BasicInfo, Career, Skill, Education, Project } from "@/types/resume";
 import { useState } from "react";
 import Link from "next/link";
+import { Mail, Phone, Github } from "lucide-react";
 
 const getLevelText = (level: number) => {
   const levels = {
@@ -12,6 +13,26 @@ const getLevelText = (level: number) => {
     3: "관련 지식과 경험이 풍부하며 능숙하게 업무 진행 가능",
   };
   return levels[level as keyof typeof levels] || "";
+};
+
+const highlightKeywords = (text: string) => {
+  // 키워드 패턴: ** 로 감싸진 텍스트를 찾음
+  const parts = text.split(/(\*\*.*?\*\*)/g);
+
+  return parts.map((part, index) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      const keyword = part.slice(2, -2);
+      return (
+        <span
+          key={index}
+          className="font-semibold text-blue-600 bg-blue-50 px-1 rounded"
+        >
+          {keyword}
+        </span>
+      );
+    }
+    return part;
+  });
 };
 
 export default function ResumePage() {
@@ -28,7 +49,6 @@ export default function ResumePage() {
 
   const [selectedSections, setSelectedSections] = useState({
     basic: true,
-    introduce: true,
     career: true,
     skills: true,
     education: true,
@@ -36,10 +56,23 @@ export default function ResumePage() {
   });
 
   const [isPreview, setIsPreview] = useState(false);
+  const [sortOrder, setSortOrder] = useState<"latest" | "oldest">("latest");
 
   const toggleSection = (section: keyof typeof selectedSections) => {
     setSelectedSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
+
+  const sortedCareers = [...careers].sort((a, b) => {
+    const dateA = new Date(a.startDate).getTime();
+    const dateB = new Date(b.startDate).getTime();
+    return sortOrder === "latest" ? dateB - dateA : dateA - dateB;
+  });
+
+  const sortedProjects = [...projects].sort((a, b) => {
+    const dateA = new Date(a.startDate).getTime();
+    const dateB = new Date(b.startDate).getTime();
+    return sortOrder === "latest" ? dateB - dateA : dateA - dateB;
+  });
 
   const groupedSkills = skills.reduce((acc, skill) => {
     if (!acc[skill.category]) {
@@ -70,22 +103,22 @@ export default function ResumePage() {
                 <img
                     src={basicInfo.profileImage}
                     alt={basicInfo.name}
-                    className="w-70 h-80 object-cover rounded-lg"
+                    className="w-65 h-75 object-cover rounded-lg"
                 />
             )}
             <div className="flex-1">
-              <h1 className="text-3xl font-semibold text-gray-900 mb-0.5 tracking-tight">
+              <h1 className="text-3xl font-semibold text-gray-900 mb-0.5 tracking-tight mb-2">
                 {basicInfo.name || "이름 없음"}
               </h1>
               {(basicInfo.nameEn || basicInfo.nickname) && (
-                  <p className="text-sm text-gray-600 mb-2">
+                  <p className="text-md text-gray-600 mb-3">
                     {[basicInfo.nameEn, basicInfo.nickname].filter(Boolean).join(" / ")}
                   </p>
               )}
               <div className="flex flex-col gap-1 text-xs text-gray-600">
                 {basicInfo.email && (
                     <div className="flex items-center gap-2">
-                      <span className="font-medium text-gray-900 w-14 shrink-0">Email</span>
+                      <Mail size={18} className="shrink-0" />
                       <a
                           href={`mailto:${basicInfo.email}`}
                           className="hover:text-gray-900 transition-colors"
@@ -96,13 +129,13 @@ export default function ResumePage() {
                 )}
                 {basicInfo.phone && (
                     <div className="flex items-center gap-2">
-                      <span className="font-medium text-gray-900 w-14 shrink-0">Phone</span>
+                      <Phone size={18} className="shrink-0" />
                       <span>{basicInfo.phone}</span>
                     </div>
                 )}
                 {basicInfo.github && (
                     <div className="flex items-center gap-2">
-                      <span className="font-medium text-gray-900 w-14 shrink-0">GitHub</span>
+                      <Github size={18} className="shrink-0" />
                       <a
                           href={
                             basicInfo.github.startsWith("http")
@@ -119,26 +152,38 @@ export default function ResumePage() {
                     </div>
                 )}
               </div>
+              {basicInfo.tags && basicInfo.tags.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-3">
+                  {basicInfo.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-sm"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
+          {basicInfo.introduce && (
+            <div className="mt-4 pt-4 border-t border-gray-200">
+              <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
+                {highlightKeywords(basicInfo.introduce)}
+              </p>
+            </div>
+          )}
         </div>
       )}
 
-      {selectedSections.introduce && basicInfo.introduce && (
-        <div className="mb-4 p-4 bg-white border rounded-lg shadow-sm">
-          <h2 className="text-base font-semibold text-gray-900 mb-3 pb-2 border-b">소개</h2>
-          <p className="text-xs text-gray-700 leading-relaxed whitespace-pre-wrap">{basicInfo.introduce}</p>
-        </div>
-      )}
-
-      {selectedSections.career && careers.length > 0 && (
+      {selectedSections.career && sortedCareers.length > 0 && (
         <div className="mb-4 p-4 bg-white border rounded-lg shadow-sm">
           <div className="flex justify-between items-end mb-3 pb-2 border-b">
             <h2 className="text-base font-semibold text-gray-900">경력</h2>
             <span className="text-xs bg-gray-800 text-white px-2 py-0.5 rounded-md font-medium">총 {years}년 {months}개월</span>
           </div>
           <div className="space-y-3">
-            {careers.map((career) => {
+            {sortedCareers.map((career) => {
               const start = new Date(career.startDate);
               const end = career.current ? new Date() : new Date(career.endDate);
               const careerMonths = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
@@ -235,11 +280,11 @@ export default function ResumePage() {
         </div>
       )}
 
-      {selectedSections.projects && projects.length > 0 && (
+      {selectedSections.projects && sortedProjects.length > 0 && (
         <div className="mb-4 p-4 bg-white border rounded-lg shadow-sm">
           <h2 className="text-base font-semibold text-gray-900 mb-3 pb-2 border-b">프로젝트</h2>
           <div className="space-y-3">
-            {projects.map((project) => (
+            {sortedProjects.map((project) => (
               <div key={project.id} className="rounded-md bg-gray-50 p-3 shadow-sm border border-gray-200">
                 <div className="mb-2">
                   <div className="flex items-center gap-2 mb-1">
@@ -325,27 +370,18 @@ export default function ResumePage() {
         </button>
       </div>
 
-      <div className="mb-6 flex items-center gap-3 text-sm">
-        <button
-          onClick={() => toggleSection("basic")}
-          className={`px-3 py-1.5 rounded-lg border transition-colors ${
-            selectedSections.basic
-              ? "bg-primary text-primary-foreground border-primary"
-              : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
-          }`}
-        >
-          기본사항
-        </button>
-        <button
-          onClick={() => toggleSection("introduce")}
-          className={`px-3 py-1.5 rounded-lg border transition-colors ${
-            selectedSections.introduce
-              ? "bg-primary text-primary-foreground border-primary"
-              : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
-          }`}
-        >
-          자기소개
-        </button>
+      <div className="mb-6 space-y-3">
+        <div className="flex items-center gap-3 text-sm">
+          <button
+            onClick={() => toggleSection("basic")}
+            className={`px-3 py-1.5 rounded-lg border transition-colors ${
+              selectedSections.basic
+                ? "bg-primary text-primary-foreground border-primary"
+                : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
+            }`}
+          >
+            기본사항
+          </button>
         <button
           onClick={() => toggleSection("career")}
           className={`px-3 py-1.5 rounded-lg border transition-colors ${
@@ -386,6 +422,30 @@ export default function ResumePage() {
         >
           프로젝트 ({projects.length})
         </button>
+        </div>
+        <div className="flex items-center gap-2 text-sm">
+          <span className="text-gray-700 font-medium">정렬:</span>
+          <button
+            onClick={() => setSortOrder("latest")}
+            className={`px-3 py-1.5 rounded-lg border transition-colors ${
+              sortOrder === "latest"
+                ? "bg-primary text-primary-foreground border-primary"
+                : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
+            }`}
+          >
+            최신순
+          </button>
+          <button
+            onClick={() => setSortOrder("oldest")}
+            className={`px-3 py-1.5 rounded-lg border transition-colors ${
+              sortOrder === "oldest"
+                ? "bg-primary text-primary-foreground border-primary"
+                : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
+            }`}
+          >
+            과거순
+          </button>
+        </div>
       </div>
 
       {!basicInfo.name && (

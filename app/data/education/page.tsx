@@ -3,6 +3,87 @@
 import { useFileStorage } from "@/hooks/useFileStorage";
 import { Education } from "@/types/resume";
 import { useState } from "react";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { GripVertical } from "lucide-react";
+
+function SortableEducationItem({ education, onEdit, onDelete }: { education: Education; onEdit: (education: Education) => void; onDelete: (id: string) => void }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: education.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="border p-6 rounded-lg bg-white"
+    >
+      <div className="flex justify-between items-start">
+        <div className="flex items-start gap-3 flex-1">
+          <button
+            {...attributes}
+            {...listeners}
+            className="mt-1 cursor-grab active:cursor-grabbing p-2 hover:bg-gray-100 rounded text-gray-400 hover:text-gray-600"
+          >
+            <GripVertical size={20} />
+          </button>
+          <div className="flex-1">
+            <h3 className="text-xl font-bold">{education.school}</h3>
+            <p className="text-muted-foreground">
+              {education.major} ({education.degree})
+            </p>
+            <p className="text-sm text-muted-foreground">
+              {education.startDate} ~ {education.endDate}
+            </p>
+            {education.gpa && (
+              <p className="text-sm text-muted-foreground">학점: {education.gpa}</p>
+            )}
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <button
+            onClick={() => onEdit(education)}
+            className="px-3 py-1 text-sm bg-secondary text-secondary-foreground rounded hover:bg-secondary/90"
+          >
+            수정
+          </button>
+          <button
+            onClick={() => onDelete(education.id)}
+            className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
+          >
+            삭제
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function EducationPage() {
   const [educations, saveEducations, loading] = useFileStorage<Education[]>("educations", []);
@@ -16,6 +97,24 @@ export default function EducationPage() {
     endDate: "",
     gpa: "",
   });
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = educations.findIndex((e) => e.id === active.id);
+      const newIndex = educations.findIndex((e) => e.id === over.id);
+      const reorderedEducations = arrayMove(educations, oldIndex, newIndex);
+      await saveEducations(reorderedEducations);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -164,38 +263,27 @@ export default function EducationPage() {
             {educations.length === 0 ? (
               <p className="text-muted-foreground">등록된 학력이 없습니다.</p>
             ) : (
-              educations.map((education) => (
-                <div key={education.id} className="border p-6 rounded-lg">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="text-xl font-bold">{education.school}</h3>
-                      <p className="text-muted-foreground">
-                        {education.major} ({education.degree})
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {education.startDate} ~ {education.endDate}
-                      </p>
-                      {education.gpa && (
-                        <p className="text-sm text-muted-foreground">학점: {education.gpa}</p>
-                      )}
-                    </div>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => handleEdit(education)}
-                        className="px-3 py-1 text-sm bg-secondary text-secondary-foreground rounded hover:bg-secondary/90"
-                      >
-                        수정
-                      </button>
-                      <button
-                        onClick={() => handleDelete(education.id)}
-                        className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
-                      >
-                        삭제
-                      </button>
-                    </div>
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={educations.map((e) => e.id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <div className="space-y-4">
+                    {educations.map((education) => (
+                      <SortableEducationItem
+                        key={education.id}
+                        education={education}
+                        onEdit={handleEdit}
+                        onDelete={handleDelete}
+                      />
+                    ))}
                   </div>
-                </div>
-              ))
+                </SortableContext>
+              </DndContext>
             )}
           </div>
         )}

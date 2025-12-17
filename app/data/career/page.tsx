@@ -3,6 +3,93 @@
 import { useFileStorage } from "@/hooks/useFileStorage";
 import { Career } from "@/types/resume";
 import { useState } from "react";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { GripVertical } from "lucide-react";
+
+function SortableCareerItem({ career, onEdit, onDelete }: { career: Career; onEdit: (career: Career) => void; onDelete: (id: string) => void }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: career.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="border p-6 rounded-lg bg-white"
+    >
+      <div className="flex justify-between items-start mb-4">
+        <div className="flex items-start gap-3 flex-1">
+          <button
+            {...attributes}
+            {...listeners}
+            className="mt-1 cursor-grab active:cursor-grabbing p-2 hover:bg-gray-100 rounded text-gray-400 hover:text-gray-600"
+          >
+            <GripVertical size={20} />
+          </button>
+          <div className="flex-1">
+            <h3 className="text-xl font-bold">{career.company}</h3>
+            <p className="text-muted-foreground">{career.position}</p>
+            <p className="text-sm text-muted-foreground">
+              {career.startDate} ~ {career.current ? "현재" : career.endDate}
+            </p>
+            {career.description && <p className="mt-4">{career.description}</p>}
+            {career.achievements.length > 0 && (
+              <div className="mt-4">
+                <h4 className="font-semibold mb-2">주요 성과:</h4>
+                <ul className="list-disc list-inside space-y-1">
+                  {career.achievements.map((achievement, index) => (
+                    <li key={index}>{achievement}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <button
+            onClick={() => onEdit(career)}
+            className="px-3 py-1 text-sm bg-secondary text-secondary-foreground rounded hover:bg-secondary/90"
+          >
+            수정
+          </button>
+          <button
+            onClick={() => onDelete(career.id)}
+            className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
+          >
+            삭제
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function CareerPage() {
   const [careers, saveCareers, loading] = useFileStorage<Career[]>("careers", []);
@@ -18,6 +105,24 @@ export default function CareerPage() {
     achievements: [],
   });
   const [achievementInput, setAchievementInput] = useState("");
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = careers.findIndex((c) => c.id === active.id);
+      const newIndex = careers.findIndex((c) => c.id === over.id);
+      const reorderedCareers = arrayMove(careers, oldIndex, newIndex);
+      await saveCareers(reorderedCareers);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -221,44 +326,27 @@ export default function CareerPage() {
             {careers.length === 0 ? (
               <p className="text-muted-foreground">등록된 경력이 없습니다.</p>
             ) : (
-              careers.map((career) => (
-                <div key={career.id} className="border p-6 rounded-lg">
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <h3 className="text-xl font-bold">{career.company}</h3>
-                      <p className="text-muted-foreground">{career.position}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {career.startDate} ~ {career.current ? "현재" : career.endDate}
-                      </p>
-                    </div>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => handleEdit(career)}
-                        className="px-3 py-1 text-sm bg-secondary text-secondary-foreground rounded hover:bg-secondary/90"
-                      >
-                        수정
-                      </button>
-                      <button
-                        onClick={() => handleDelete(career.id)}
-                        className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
-                      >
-                        삭제
-                      </button>
-                    </div>
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={careers.map((c) => c.id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <div className="space-y-4">
+                    {careers.map((career) => (
+                      <SortableCareerItem
+                        key={career.id}
+                        career={career}
+                        onEdit={handleEdit}
+                        onDelete={handleDelete}
+                      />
+                    ))}
                   </div>
-                  {career.description && <p className="mb-4">{career.description}</p>}
-                  {career.achievements.length > 0 && (
-                    <div>
-                      <h4 className="font-semibold mb-2">주요 성과:</h4>
-                      <ul className="list-disc list-inside space-y-1">
-                        {career.achievements.map((achievement, index) => (
-                          <li key={index}>{achievement}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              ))
+                </SortableContext>
+              </DndContext>
             )}
           </div>
         )}

@@ -1,5 +1,15 @@
 [
   {
+    "company": "로드맵",
+    "position": "차장",
+    "startDate": "2025-09",
+    "endDate": "",
+    "current": true,
+    "description": "",
+    "achievements": [],
+    "id": "1765961418228"
+  },
+  {
     "id": "1",
     "company": "아이온커뮤니케이션즈",
     "position": "ACT 사업본부 / DEV 2팀 / 백엔드 개발자",

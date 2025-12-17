@@ -4,6 +4,7 @@ import { useFileStorage } from "@/hooks/useFileStorage";
 import { BasicInfo, Career, Skill, Education, Project } from "@/types/resume";
 import { useState } from "react";
 import Link from "next/link";
+import { Mail, Phone } from "lucide-react";
 
 export default function CareerStatementPage() {
   const [basicInfo, , loadingBasic] = useFileStorage<BasicInfo>("basic-info", {
@@ -26,10 +27,23 @@ export default function CareerStatementPage() {
   });
 
   const [isPreview, setIsPreview] = useState(false);
+  const [sortOrder, setSortOrder] = useState<"latest" | "oldest">("latest");
 
   const toggleSection = (section: keyof typeof selectedSections) => {
     setSelectedSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
+
+  const sortedCareers = [...careers].sort((a, b) => {
+    const dateA = new Date(a.startDate).getTime();
+    const dateB = new Date(b.startDate).getTime();
+    return sortOrder === "latest" ? dateB - dateA : dateA - dateB;
+  });
+
+  const sortedProjects = [...projects].sort((a, b) => {
+    const dateA = new Date(a.startDate).getTime();
+    const dateB = new Date(b.startDate).getTime();
+    return sortOrder === "latest" ? dateB - dateA : dateA - dateB;
+  });
 
   const groupedSkills = skills.reduce((acc, skill) => {
     if (!acc[skill.category]) {
@@ -55,25 +69,37 @@ export default function CareerStatementPage() {
           <div className="text-xs text-gray-600 space-y-1">
             {basicInfo.email && (
               <div className="flex items-center justify-center gap-2">
-                <span className="font-medium text-gray-900">Email</span>
+                <Mail size={16} className="text-gray-500" />
                 <span>{basicInfo.email}</span>
               </div>
             )}
             {basicInfo.phone && (
               <div className="flex items-center justify-center gap-2">
-                <span className="font-medium text-gray-900">Phone</span>
+                <Phone size={16} className="text-gray-500" />
                 <span>{basicInfo.phone}</span>
               </div>
             )}
           </div>
+          {basicInfo.tags && basicInfo.tags.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-3 justify-center">
+              {basicInfo.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-sm"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
-      {selectedSections.career && careers.length > 0 && (
+      {selectedSections.career && sortedCareers.length > 0 && (
         <div className="mb-4 p-4 bg-white border rounded-lg shadow-sm">
           <h2 className="text-base font-semibold text-gray-900 mb-3 pb-2 border-b">경력</h2>
           <div className="space-y-3">
-            {careers.map((career) => (
+            {sortedCareers.map((career) => (
               <div key={career.id} className="rounded-md bg-gray-50 p-3 shadow-sm border border-gray-200">
                 <div className="mb-2">
                   <div className="flex items-center gap-2 mb-1">
@@ -111,11 +137,11 @@ export default function CareerStatementPage() {
         </div>
       )}
 
-      {selectedSections.projects && projects.length > 0 && (
+      {selectedSections.projects && sortedProjects.length > 0 && (
         <div className="mb-4 p-4 bg-white border rounded-lg shadow-sm">
           <h2 className="text-base font-semibold text-gray-900 mb-3 pb-2 border-b">프로젝트</h2>
           <div className="space-y-3">
-            {projects.map((project) => (
+            {sortedProjects.map((project) => (
               <div key={project.id} className="rounded-md bg-gray-50 p-3 shadow-sm border border-gray-200">
                 <div className="mb-2">
                   <div className="flex items-center gap-2 mb-1">
@@ -264,17 +290,18 @@ export default function CareerStatementPage() {
         </button>
       </div>
 
-      <div className="mb-6 flex items-center gap-3 text-sm">
-        <button
-          onClick={() => toggleSection("basic")}
-          className={`px-3 py-1.5 rounded-lg border transition-colors ${
-            selectedSections.basic
-              ? "bg-primary text-primary-foreground border-primary"
-              : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
-          }`}
-        >
-          기본사항
-        </button>
+      <div className="mb-6 space-y-3">
+        <div className="flex items-center gap-3 text-sm">
+          <button
+            onClick={() => toggleSection("basic")}
+            className={`px-3 py-1.5 rounded-lg border transition-colors ${
+              selectedSections.basic
+                ? "bg-primary text-primary-foreground border-primary"
+                : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
+            }`}
+          >
+            기본사항
+          </button>
         <button
           onClick={() => toggleSection("career")}
           className={`px-3 py-1.5 rounded-lg border transition-colors ${
@@ -315,6 +342,30 @@ export default function CareerStatementPage() {
         >
           학력 ({educations.length})
         </button>
+        </div>
+        <div className="flex items-center gap-2 text-sm">
+          <span className="text-gray-700 font-medium">정렬:</span>
+          <button
+            onClick={() => setSortOrder("latest")}
+            className={`px-3 py-1.5 rounded-lg border transition-colors ${
+              sortOrder === "latest"
+                ? "bg-primary text-primary-foreground border-primary"
+                : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
+            }`}
+          >
+            최신순
+          </button>
+          <button
+            onClick={() => setSortOrder("oldest")}
+            className={`px-3 py-1.5 rounded-lg border transition-colors ${
+              sortOrder === "oldest"
+                ? "bg-primary text-primary-foreground border-primary"
+                : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
+            }`}
+          >
+            과거순
+          </button>
+        </div>
       </div>
 
       {!basicInfo.name && (

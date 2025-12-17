@@ -3,27 +3,30 @@
 import { useFileStorage } from "@/hooks/useFileStorage";
 import { BasicInfo } from "@/types/resume";
 import { useState, useEffect } from "react";
+import { X } from "lucide-react";
 
 export default function BasicInfoPage() {
   const [data, saveData, loading] = useFileStorage<BasicInfo>("basic-info", {
     name: "",
     nameEn: "",
     nickname: "",
-    email: "",
     phone: "",
     github: "",
     blog: "",
     linkedin: "",
     introduce: "",
     profileImage: "",
+    tags: [],
   });
 
   const [formData, setFormData] = useState<BasicInfo>(data);
+  const [tagInput, setTagInput] = useState("");
 
   useEffect(() => {
     setFormData(data);
   }, [data]);
 
+  email: "",
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const success = await saveData(formData);
@@ -47,6 +50,23 @@ export default function BasicInfoPage() {
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const addTag = () => {
+    if (tagInput.trim() && !formData.tags?.includes(tagInput.trim())) {
+      setFormData((prev) => ({
+        ...prev,
+        tags: [...(prev.tags || []), tagInput.trim()],
+      }));
+      setTagInput("");
+    }
+  };
+
+  const removeTag = (tag: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      tags: prev.tags?.filter((t) => t !== tag) || [],
+    }));
   };
 
   if (loading) {
@@ -139,9 +159,49 @@ export default function BasicInfoPage() {
               value={formData.introduce || ""}
               onChange={(e) => handleChange("introduce", e.target.value)}
               rows={4}
-              placeholder="INTRODUCE 섹션에 표시될 자기소개를 입력하세요"
+              placeholder="자기소개를 입력하세요. 강조하고 싶은 키워드는 **키워드** 형식으로 입력하세요."
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
             />
+            <p className="text-xs text-gray-500 mt-1">
+              예시: 저는 **사용자 경험**을 중시하는 **프론트엔드 개발자**입니다.
+            </p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">나를 표현하는 태그</label>
+            <div className="flex gap-2 mb-2">
+              <input
+                type="text"
+                value={tagInput}
+                onChange={(e) => setTagInput(e.target.value)}
+                onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addTag())}
+                placeholder="태그를 입력하고 추가 버튼을 누르세요"
+                className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+              <button
+                type="button"
+                onClick={addTag}
+                className="px-4 py-2 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/90"
+              >
+                추가
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {formData.tags?.map((tag) => (
+                <span
+                  key={tag}
+                  className="inline-flex items-center gap-1 bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium"
+                >
+                  {tag}
+                  <button
+                    type="button"
+                    onClick={() => removeTag(tag)}
+                    className="hover:bg-blue-200 rounded-full p-0.5"
+                  >
+                    <X size={14} />
+                  </button>
+                </span>
+              ))}
+            </div>
           </div>
           <div>
             <label className="block text-sm font-medium mb-2">프로필 이미지</label>

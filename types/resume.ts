@@ -9,6 +9,7 @@ export interface BasicInfo {
   linkedin?: string;
   introduce?: string;
   profileImage?: string;
+  tags?: string[];
 }
 
 export interface Career {
