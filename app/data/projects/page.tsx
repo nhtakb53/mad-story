@@ -107,41 +107,41 @@ export default function ProjectsPage() {
   }
 
   return (
-    <div className="p-8 max-w-4xl">
-      <h1 className="text-3xl font-bold mb-6">프로젝트</h1>
+    <div className="p-8 flex justify-center">
+      <div className="w-full max-w-2xl">
+        <h1 className="text-3xl font-bold mb-6">프로젝트</h1>
 
-      <div className="mb-8">
-        <button
-          onClick={() => setIsEditing(!isEditing)}
-          className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
-        >
-          {isEditing ? "목록으로" : "프로젝트 추가"}
-        </button>
-      </div>
+        <div className="mb-8">
+          <button
+            onClick={() => setIsEditing(!isEditing)}
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
+          >
+            {isEditing ? "목록으로" : "프로젝트 추가"}
+          </button>
+        </div>
 
-      {isEditing ? (
-        <form onSubmit={handleSubmit} className="space-y-6 border p-6 rounded-lg">
-          <div>
-            <label className="block text-sm font-medium mb-2">프로젝트명 *</label>
-            <input
-              type="text"
-              required
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-2">프로젝트 설명 *</label>
-            <textarea
-              required
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              rows={3}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
+        {isEditing ? (
+          <form onSubmit={handleSubmit} className="space-y-6 border p-6 rounded-lg">
+            <div>
+              <label className="block text-sm font-medium mb-2">프로젝트명 *</label>
+              <input
+                type="text"
+                required
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">프로젝트 설명 *</label>
+              <textarea
+                required
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                rows={3}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
             <div>
               <label className="block text-sm font-medium mb-2">시작일 *</label>
               <input
@@ -162,7 +162,6 @@ export default function ProjectsPage() {
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
-          </div>
           <div>
             <label className="block text-sm font-medium mb-2">역할 *</label>
             <input
@@ -273,77 +272,78 @@ export default function ProjectsPage() {
             )}
           </div>
         </form>
-      ) : (
-        <div className="space-y-4">
-          {projects.length === 0 ? (
-            <p className="text-muted-foreground">등록된 프로젝트가 없습니다.</p>
-          ) : (
-            projects.map((project) => (
-              <div key={project.id} className="border p-6 rounded-lg">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 className="text-xl font-bold">{project.name}</h3>
-                    <p className="text-muted-foreground">{project.role}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {project.startDate} ~ {project.endDate}
-                    </p>
-                    {project.url && (
-                      <a
-                        href={project.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sm text-primary hover:underline"
-                      >
-                        {project.url}
-                      </a>
-                    )}
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handleEdit(project)}
-                      className="px-3 py-1 text-sm bg-secondary text-secondary-foreground rounded hover:bg-secondary/90"
-                    >
-                      수정
-                    </button>
-                    <button
-                      onClick={() => handleDelete(project.id)}
-                      className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
-                    >
-                      삭제
-                    </button>
-                  </div>
-                </div>
-                <p className="mb-4">{project.description}</p>
-                {project.techStack.length > 0 && (
-                  <div className="mb-4">
-                    <h4 className="font-semibold mb-2">기술 스택:</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {project.techStack.map((tech) => (
-                        <span
-                          key={tech}
-                          className="bg-primary/10 px-3 py-1 rounded-full text-sm"
+        ) : (
+          <div className="space-y-4">
+            {projects.length === 0 ? (
+              <p className="text-muted-foreground">등록된 프로젝트가 없습니다.</p>
+            ) : (
+              projects.map((project) => (
+                <div key={project.id} className="border p-6 rounded-lg">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h3 className="text-xl font-bold">{project.name}</h3>
+                      <p className="text-muted-foreground">{project.role}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {project.startDate} ~ {project.endDate}
+                      </p>
+                      {project.url && (
+                        <a
+                          href={project.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm text-primary hover:underline"
                         >
-                          {tech}
-                        </span>
-                      ))}
+                          {project.url}
+                        </a>
+                      )}
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleEdit(project)}
+                        className="px-3 py-1 text-sm bg-secondary text-secondary-foreground rounded hover:bg-secondary/90"
+                      >
+                        수정
+                      </button>
+                      <button
+                        onClick={() => handleDelete(project.id)}
+                        className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
+                      >
+                        삭제
+                      </button>
                     </div>
                   </div>
-                )}
-                {project.achievements.length > 0 && (
-                  <div>
-                    <h4 className="font-semibold mb-2">주요 성과:</h4>
-                    <ul className="list-disc list-inside space-y-1">
-                      {project.achievements.map((achievement, index) => (
-                        <li key={index}>{achievement}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-            ))
-          )}
-        </div>
-      )}
+                  <p className="mb-4">{project.description}</p>
+                  {project.techStack.length > 0 && (
+                    <div className="mb-4">
+                      <h4 className="font-semibold mb-2">기술 스택:</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {project.techStack.map((tech) => (
+                          <span
+                            key={tech}
+                            className="bg-primary/10 px-3 py-1 rounded-full text-sm"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {project.achievements.length > 0 && (
+                    <div>
+                      <h4 className="font-semibold mb-2">주요 성과:</h4>
+                      <ul className="list-disc list-inside space-y-1">
+                        {project.achievements.map((achievement, index) => (
+                          <li key={index}>{achievement}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -65,52 +65,52 @@ export default function EducationPage() {
   }
 
   return (
-    <div className="p-8 max-w-4xl">
-      <h1 className="text-3xl font-bold mb-6">학력</h1>
+    <div className="p-8 flex justify-center">
+      <div className="w-full max-w-2xl">
+        <h1 className="text-3xl font-bold mb-6">학력</h1>
 
-      <div className="mb-8">
-        <button
-          onClick={() => setIsEditing(!isEditing)}
-          className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
-        >
-          {isEditing ? "목록으로" : "학력 추가"}
-        </button>
-      </div>
+        <div className="mb-8">
+          <button
+            onClick={() => setIsEditing(!isEditing)}
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
+          >
+            {isEditing ? "목록으로" : "학력 추가"}
+          </button>
+        </div>
 
-      {isEditing ? (
-        <form onSubmit={handleSubmit} className="space-y-6 border p-6 rounded-lg">
-          <div>
-            <label className="block text-sm font-medium mb-2">학교명 *</label>
-            <input
-              type="text"
-              required
-              value={formData.school}
-              onChange={(e) => setFormData({ ...formData, school: e.target.value })}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-2">전공 *</label>
-            <input
-              type="text"
-              required
-              value={formData.major}
-              onChange={(e) => setFormData({ ...formData, major: e.target.value })}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-2">학위 *</label>
-            <input
-              type="text"
-              required
-              value={formData.degree}
-              onChange={(e) => setFormData({ ...formData, degree: e.target.value })}
-              placeholder="예: 학사, 석사, 박사"
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
+        {isEditing ? (
+          <form onSubmit={handleSubmit} className="space-y-6 border p-6 rounded-lg">
+            <div>
+              <label className="block text-sm font-medium mb-2">학교명 *</label>
+              <input
+                type="text"
+                required
+                value={formData.school}
+                onChange={(e) => setFormData({ ...formData, school: e.target.value })}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">전공 *</label>
+              <input
+                type="text"
+                required
+                value={formData.major}
+                onChange={(e) => setFormData({ ...formData, major: e.target.value })}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">학위 *</label>
+              <input
+                type="text"
+                required
+                value={formData.degree}
+                onChange={(e) => setFormData({ ...formData, degree: e.target.value })}
+                placeholder="예: 학사, 석사, 박사"
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
             <div>
               <label className="block text-sm font-medium mb-2">입학일 *</label>
               <input
@@ -131,7 +131,6 @@ export default function EducationPage() {
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
-          </div>
           <div>
             <label className="block text-sm font-medium mb-2">학점</label>
             <input
@@ -160,46 +159,47 @@ export default function EducationPage() {
             )}
           </div>
         </form>
-      ) : (
-        <div className="space-y-4">
-          {educations.length === 0 ? (
-            <p className="text-muted-foreground">등록된 학력이 없습니다.</p>
-          ) : (
-            educations.map((education) => (
-              <div key={education.id} className="border p-6 rounded-lg">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="text-xl font-bold">{education.school}</h3>
-                    <p className="text-muted-foreground">
-                      {education.major} ({education.degree})
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {education.startDate} ~ {education.endDate}
-                    </p>
-                    {education.gpa && (
-                      <p className="text-sm text-muted-foreground">학점: {education.gpa}</p>
-                    )}
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handleEdit(education)}
-                      className="px-3 py-1 text-sm bg-secondary text-secondary-foreground rounded hover:bg-secondary/90"
-                    >
-                      수정
-                    </button>
-                    <button
-                      onClick={() => handleDelete(education.id)}
-                      className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
-                    >
-                      삭제
-                    </button>
+        ) : (
+          <div className="space-y-4">
+            {educations.length === 0 ? (
+              <p className="text-muted-foreground">등록된 학력이 없습니다.</p>
+            ) : (
+              educations.map((education) => (
+                <div key={education.id} className="border p-6 rounded-lg">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="text-xl font-bold">{education.school}</h3>
+                      <p className="text-muted-foreground">
+                        {education.major} ({education.degree})
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {education.startDate} ~ {education.endDate}
+                      </p>
+                      {education.gpa && (
+                        <p className="text-sm text-muted-foreground">학점: {education.gpa}</p>
+                      )}
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleEdit(education)}
+                        className="px-3 py-1 text-sm bg-secondary text-secondary-foreground rounded hover:bg-secondary/90"
+                      >
+                        수정
+                      </button>
+                      <button
+                        onClick={() => handleDelete(education.id)}
+                        className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
+                      >
+                        삭제
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))
-          )}
-        </div>
-      )}
+              ))
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

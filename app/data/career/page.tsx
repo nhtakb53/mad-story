@@ -86,41 +86,41 @@ export default function CareerPage() {
   }
 
   return (
-    <div className="p-8 max-w-4xl">
-      <h1 className="text-3xl font-bold mb-6">경력</h1>
+    <div className="p-8 flex justify-center">
+      <div className="w-full max-w-2xl">
+        <h1 className="text-3xl font-bold mb-6">경력</h1>
 
-      <div className="mb-8">
-        <button
-          onClick={() => setIsEditing(!isEditing)}
-          className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
-        >
-          {isEditing ? "목록으로" : "경력 추가"}
-        </button>
-      </div>
+        <div className="mb-8">
+          <button
+            onClick={() => setIsEditing(!isEditing)}
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
+          >
+            {isEditing ? "목록으로" : "경력 추가"}
+          </button>
+        </div>
 
-      {isEditing ? (
-        <form onSubmit={handleSubmit} className="space-y-6 border p-6 rounded-lg">
-          <div>
-            <label className="block text-sm font-medium mb-2">회사명 *</label>
-            <input
-              type="text"
-              required
-              value={formData.company}
-              onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-2">직책 *</label>
-            <input
-              type="text"
-              required
-              value={formData.position}
-              onChange={(e) => setFormData({ ...formData, position: e.target.value })}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
+        {isEditing ? (
+          <form onSubmit={handleSubmit} className="space-y-6 border p-6 rounded-lg">
+            <div>
+              <label className="block text-sm font-medium mb-2">회사명 *</label>
+              <input
+                type="text"
+                required
+                value={formData.company}
+                onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">직책 *</label>
+              <input
+                type="text"
+                required
+                value={formData.position}
+                onChange={(e) => setFormData({ ...formData, position: e.target.value })}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
             <div>
               <label className="block text-sm font-medium mb-2">시작일 *</label>
               <input
@@ -141,7 +141,6 @@ export default function CareerPage() {
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary disabled:bg-gray-100"
               />
             </div>
-          </div>
           <div className="flex items-center">
             <input
               type="checkbox"
@@ -217,52 +216,53 @@ export default function CareerPage() {
             )}
           </div>
         </form>
-      ) : (
-        <div className="space-y-4">
-          {careers.length === 0 ? (
-            <p className="text-muted-foreground">등록된 경력이 없습니다.</p>
-          ) : (
-            careers.map((career) => (
-              <div key={career.id} className="border p-6 rounded-lg">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 className="text-xl font-bold">{career.company}</h3>
-                    <p className="text-muted-foreground">{career.position}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {career.startDate} ~ {career.current ? "현재" : career.endDate}
-                    </p>
+        ) : (
+          <div className="space-y-4">
+            {careers.length === 0 ? (
+              <p className="text-muted-foreground">등록된 경력이 없습니다.</p>
+            ) : (
+              careers.map((career) => (
+                <div key={career.id} className="border p-6 rounded-lg">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h3 className="text-xl font-bold">{career.company}</h3>
+                      <p className="text-muted-foreground">{career.position}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {career.startDate} ~ {career.current ? "현재" : career.endDate}
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleEdit(career)}
+                        className="px-3 py-1 text-sm bg-secondary text-secondary-foreground rounded hover:bg-secondary/90"
+                      >
+                        수정
+                      </button>
+                      <button
+                        onClick={() => handleDelete(career.id)}
+                        className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
+                      >
+                        삭제
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handleEdit(career)}
-                      className="px-3 py-1 text-sm bg-secondary text-secondary-foreground rounded hover:bg-secondary/90"
-                    >
-                      수정
-                    </button>
-                    <button
-                      onClick={() => handleDelete(career.id)}
-                      className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
-                    >
-                      삭제
-                    </button>
-                  </div>
+                  {career.description && <p className="mb-4">{career.description}</p>}
+                  {career.achievements.length > 0 && (
+                    <div>
+                      <h4 className="font-semibold mb-2">주요 성과:</h4>
+                      <ul className="list-disc list-inside space-y-1">
+                        {career.achievements.map((achievement, index) => (
+                          <li key={index}>{achievement}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
-                {career.description && <p className="mb-4">{career.description}</p>}
-                {career.achievements.length > 0 && (
-                  <div>
-                    <h4 className="font-semibold mb-2">주요 성과:</h4>
-                    <ul className="list-disc list-inside space-y-1">
-                      {career.achievements.map((achievement, index) => (
-                        <li key={index}>{achievement}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-            ))
-          )}
-        </div>
-      )}
+              ))
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

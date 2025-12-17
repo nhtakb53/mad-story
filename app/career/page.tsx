@@ -250,7 +250,7 @@ export default function CareerStatementPage() {
 
   return (
     <div className="p-8">
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-4">
         <h1 className="text-3xl font-bold">경력기술서</h1>
         <button
           onClick={() => setIsPreview(true)}
@@ -260,55 +260,57 @@ export default function CareerStatementPage() {
         </button>
       </div>
 
-      <div className="mb-8 p-6 bg-gray-50 rounded-lg">
-        <h2 className="text-xl font-semibold mb-4">포함할 섹션 선택</h2>
-        <div className="space-y-2">
-          <label className="flex items-center">
-            <input
-              type="checkbox"
-              checked={selectedSections.basic}
-              onChange={() => toggleSection("basic")}
-              className="mr-3 w-4 h-4"
-            />
-            <span>기본사항</span>
-          </label>
-          <label className="flex items-center">
-            <input
-              type="checkbox"
-              checked={selectedSections.career}
-              onChange={() => toggleSection("career")}
-              className="mr-3 w-4 h-4"
-            />
-            <span>경력 ({careers.length}개)</span>
-          </label>
-          <label className="flex items-center">
-            <input
-              type="checkbox"
-              checked={selectedSections.projects}
-              onChange={() => toggleSection("projects")}
-              className="mr-3 w-4 h-4"
-            />
-            <span>프로젝트 ({projects.length}개)</span>
-          </label>
-          <label className="flex items-center">
-            <input
-              type="checkbox"
-              checked={selectedSections.skills}
-              onChange={() => toggleSection("skills")}
-              className="mr-3 w-4 h-4"
-            />
-            <span>보유기술 ({skills.length}개)</span>
-          </label>
-          <label className="flex items-center">
-            <input
-              type="checkbox"
-              checked={selectedSections.education}
-              onChange={() => toggleSection("education")}
-              className="mr-3 w-4 h-4"
-            />
-            <span>학력 ({educations.length}개)</span>
-          </label>
-        </div>
+      <div className="mb-6 flex items-center gap-3 text-sm">
+        <button
+          onClick={() => toggleSection("basic")}
+          className={`px-3 py-1.5 rounded-lg border transition-colors ${
+            selectedSections.basic
+              ? "bg-primary text-primary-foreground border-primary"
+              : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
+          }`}
+        >
+          기본사항
+        </button>
+        <button
+          onClick={() => toggleSection("career")}
+          className={`px-3 py-1.5 rounded-lg border transition-colors ${
+            selectedSections.career
+              ? "bg-primary text-primary-foreground border-primary"
+              : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
+          }`}
+        >
+          경력 ({careers.length})
+        </button>
+        <button
+          onClick={() => toggleSection("projects")}
+          className={`px-3 py-1.5 rounded-lg border transition-colors ${
+            selectedSections.projects
+              ? "bg-primary text-primary-foreground border-primary"
+              : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
+          }`}
+        >
+          프로젝트 ({projects.length})
+        </button>
+        <button
+          onClick={() => toggleSection("skills")}
+          className={`px-3 py-1.5 rounded-lg border transition-colors ${
+            selectedSections.skills
+              ? "bg-primary text-primary-foreground border-primary"
+              : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
+          }`}
+        >
+          보유기술 ({skills.length})
+        </button>
+        <button
+          onClick={() => toggleSection("education")}
+          className={`px-3 py-1.5 rounded-lg border transition-colors ${
+            selectedSections.education
+              ? "bg-primary text-primary-foreground border-primary"
+              : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
+          }`}
+        >
+          학력 ({educations.length})
+        </button>
       </div>
 
       {!basicInfo.name && (
