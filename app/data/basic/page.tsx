@@ -10,6 +10,7 @@ export default function BasicInfoPage() {
     name: "",
     nameEn: "",
     nickname: "",
+    email: "",
     phone: "",
     github: "",
     blog: "",
@@ -26,7 +27,6 @@ export default function BasicInfoPage() {
     setFormData(data);
   }, [data]);
 
-  email: "",
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const success = await saveData(formData);
