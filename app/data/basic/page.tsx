@@ -8,6 +8,7 @@ export default function BasicInfoPage() {
   const [data, saveData, loading] = useFileStorage<BasicInfo>("basic-info", {
     name: "",
     nameEn: "",
+    nickname: "",
     email: "",
     phone: "",
     github: "",
@@ -37,6 +38,17 @@ export default function BasicInfoPage() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData((prev) => ({ ...prev, profileImage: reader.result as string }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   if (loading) {
     return <div className="p-8">로딩 중...</div>;
   }
@@ -62,6 +74,15 @@ export default function BasicInfoPage() {
               type="text"
               value={formData.nameEn || ""}
               onChange={(e) => handleChange("nameEn", e.target.value)}
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">닉네임</label>
+            <input
+              type="text"
+              value={formData.nickname || ""}
+              onChange={(e) => handleChange("nickname", e.target.value)}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
@@ -123,14 +144,38 @@ export default function BasicInfoPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-2">프로필 이미지 URL</label>
-            <input
-              type="url"
-              value={formData.profileImage || ""}
-              onChange={(e) => handleChange("profileImage", e.target.value)}
-              placeholder="https://example.com/profile.jpg"
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-            />
+            <label className="block text-sm font-medium mb-2">프로필 이미지</label>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-xs text-muted-foreground mb-1">파일 업로드</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-xs text-muted-foreground mb-1">또는 URL 입력</label>
+                <input
+                  type="text"
+                  value={formData.profileImage || ""}
+                  onChange={(e) => handleChange("profileImage", e.target.value)}
+                  placeholder="https://example.com/profile.jpg"
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+              </div>
+              {formData.profileImage && (
+                <div className="mt-3">
+                  <p className="text-xs text-muted-foreground mb-2">미리보기</p>
+                  <img
+                    src={formData.profileImage}
+                    alt="프로필 이미지 미리보기"
+                    className="w-32 h-32 object-cover border rounded-lg"
+                  />
+                </div>
+              )}
+            </div>
           </div>
           <button
             type="submit"

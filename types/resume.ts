@@ -1,6 +1,7 @@
 export interface BasicInfo {
   name: string;
   nameEn?: string;
+  nickname?: string;
   email: string;
   phone: string;
   github?: string;

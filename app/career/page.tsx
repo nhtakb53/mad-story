@@ -47,7 +47,11 @@ export default function CareerStatementPage() {
         <div className="mb-6 pb-4 border-b text-center">
           <h1 className="text-lg font-semibold text-foreground mb-4 tracking-tight">경력기술서</h1>
           <h2 className="text-base font-semibold text-foreground mb-1">{basicInfo.name || "이름 없음"}</h2>
-          {basicInfo.nameEn && <p className="text-xs text-muted-foreground mb-2">{basicInfo.nameEn}</p>}
+          {(basicInfo.nameEn || basicInfo.nickname) && (
+            <p className="text-xs text-muted-foreground mb-2">
+              {[basicInfo.nameEn, basicInfo.nickname].filter(Boolean).join(" / ")}
+            </p>
+          )}
           <div className="text-xs text-muted-foreground space-y-1">
             {basicInfo.email && (
               <div className="flex items-center justify-center gap-2">

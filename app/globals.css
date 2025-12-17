@@ -127,7 +127,6 @@
 /* A4 페이지 스타일 */
 .a4-page {
   width: 210mm;
-  min-height: 297mm;
   padding: 20mm;
   margin: 0 auto;
   box-sizing: border-box;
@@ -141,11 +140,9 @@
 
   .a4-page {
     width: 210mm;
-    height: 297mm;
     margin: 0;
     padding: 20mm;
     box-shadow: none;
-    page-break-after: always;
   }
 
   @page {

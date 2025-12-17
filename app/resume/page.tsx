@@ -77,9 +77,9 @@ export default function ResumePage() {
               <h1 className="text-3xl font-semibold text-foreground mb-0.5 tracking-tight">
                 {basicInfo.name || "이름 없음"}
               </h1>
-              {basicInfo.nameEn && (
+              {(basicInfo.nameEn || basicInfo.nickname) && (
                   <p className="text-sm text-muted-foreground mb-2">
-                    {basicInfo.nameEn}
+                    {[basicInfo.nameEn, basicInfo.nickname].filter(Boolean).join(" / ")}
                   </p>
               )}
               <div className="flex flex-col gap-1 text-xs text-muted-foreground">
