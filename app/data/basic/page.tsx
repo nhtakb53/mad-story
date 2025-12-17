@@ -7,9 +7,9 @@ import { useState, useEffect } from "react";
 export default function BasicInfoPage() {
   const [data, setData] = useLocalStorage<BasicInfo>("basicInfo", {
     name: "",
+    nameEn: "",
     email: "",
     phone: "",
-    address: "",
     github: "",
     blog: "",
     linkedin: "",
@@ -46,6 +46,15 @@ export default function BasicInfoPage() {
           />
         </div>
         <div>
+          <label className="block text-sm font-medium mb-2">영문 이름</label>
+          <input
+            type="text"
+            value={formData.nameEn || ""}
+            onChange={(e) => handleChange("nameEn", e.target.value)}
+            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+        </div>
+        <div>
           <label className="block text-sm font-medium mb-2">이메일 *</label>
           <input
             type="email"
@@ -62,16 +71,6 @@ export default function BasicInfoPage() {
             required
             value={formData.phone}
             onChange={(e) => handleChange("phone", e.target.value)}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-2">주소 *</label>
-          <input
-            type="text"
-            required
-            value={formData.address}
-            onChange={(e) => handleChange("address", e.target.value)}
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </div>

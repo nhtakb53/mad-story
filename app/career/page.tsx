@@ -8,9 +8,9 @@ import Link from "next/link";
 export default function CareerStatementPage() {
   const [basicInfo] = useLocalStorage<BasicInfo>("basicInfo", {
     name: "",
+    nameEn: "",
     email: "",
     phone: "",
-    address: "",
   });
   const [careers] = useLocalStorage<Career[]>("careers", []);
   const [skills] = useLocalStorage<Skill[]>("skills", []);
@@ -45,10 +45,10 @@ export default function CareerStatementPage() {
         <div className="mb-8 text-center">
           <h1 className="text-4xl font-bold mb-4">경력기술서</h1>
           <h2 className="text-2xl font-semibold mb-2">{basicInfo.name || "이름 없음"}</h2>
+          {basicInfo.nameEn && <p className="text-lg text-gray-700 mb-3">{basicInfo.nameEn}</p>}
           <div className="text-sm text-gray-600 space-y-1">
             {basicInfo.email && <p>이메일: {basicInfo.email}</p>}
             {basicInfo.phone && <p>전화번호: {basicInfo.phone}</p>}
-            {basicInfo.address && <p>주소: {basicInfo.address}</p>}
           </div>
         </div>
       )}

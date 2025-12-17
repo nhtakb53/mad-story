@@ -1,8 +1,8 @@
 export interface BasicInfo {
   name: string;
+  nameEn?: string;
   email: string;
   phone: string;
-  address: string;
   github?: string;
   blog?: string;
   linkedin?: string;
