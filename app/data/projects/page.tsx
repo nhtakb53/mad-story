@@ -72,7 +72,7 @@ function SortableProjectItem({ project, onEdit, onDelete }: { project: Project; 
               {project.startDate} ~ {project.endDate}
             </p>
             {project.description && <p className="mt-4">{project.description}</p>}
-            {project.techStack.length > 0 && (
+            {project.techStack && project.techStack.length > 0 && (
               <div className="mt-4">
                 <h4 className="font-semibold mb-2">기술스택:</h4>
                 <div className="flex flex-wrap gap-2">
@@ -84,7 +84,7 @@ function SortableProjectItem({ project, onEdit, onDelete }: { project: Project; 
                 </div>
               </div>
             )}
-            {project.achievements.length > 0 && (
+            {project.achievements && project.achievements.length > 0 && (
               <div className="mt-4">
                 <h4 className="font-semibold mb-2">주요 성과:</h4>
                 <ul className="list-disc list-inside space-y-1">
