@@ -167,7 +167,7 @@ export default function CareerStatementPage() {
                     <p className="text-xs text-gray-700 leading-relaxed">{career.description}</p>
                   </div>
                 )}
-                {career.achievements.length > 0 && (
+                {career.achievements && career.achievements.length > 0 && (
                   <div>
                     <h4 className="font-semibold text-xs text-gray-900 mb-2">주요 성과 및 기여</h4>
                     <div className="rounded-md bg-white p-2.5 border border-gray-100">
@@ -206,7 +206,7 @@ export default function CareerStatementPage() {
                 <div className="mb-3 pb-2 border-b border-gray-200">
                   <p className="text-xs text-gray-700 leading-relaxed">{project.description}</p>
                 </div>
-                {project.techStack.length > 0 && (
+                {project.techStack && project.techStack.length > 0 && (
                   <div className="mb-3 pb-2 border-b border-gray-200">
                     <h4 className="font-semibold text-xs text-gray-900 mb-2">사용 기술</h4>
                     <div className="flex flex-wrap gap-1.5">
@@ -221,7 +221,7 @@ export default function CareerStatementPage() {
                     </div>
                   </div>
                 )}
-                {project.achievements.length > 0 && (
+                {project.achievements && project.achievements.length > 0 && (
                   <div className="mb-3">
                     <h4 className="font-semibold text-xs text-gray-900 mb-2">성과 및 기여</h4>
                     <div className="rounded-md bg-white p-2.5 border border-gray-100">
