@@ -4,10 +4,23 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { AuthButton } from "./auth-button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, User, Briefcase, FolderKanban, Award, GraduationCap, FileText, FileCode, LayoutDashboard, UserCircle } from "lucide-react";
+import { getCurrentUser } from "@/lib/auth";
+import type { User as SupabaseUser } from "@supabase/supabase-js";
 
-const dataMenuItems = [
+const menuItems = [
+  {
+    title: "대시보드",
+    href: "/dashboard",
+    icon: LayoutDashboard,
+  },
+  {
+    title: "내 정보",
+    href: "/profile",
+    icon: UserCircle,
+  },
+  { divider: true },
   {
     title: "기본사항",
     href: "/data/basic",
@@ -33,9 +46,7 @@ const dataMenuItems = [
     href: "/data/education",
     icon: GraduationCap,
   },
-];
-
-const documentMenuItems = [
+  { divider: true },
   {
     title: "이력서",
     href: "/resume",
@@ -48,152 +59,118 @@ const documentMenuItems = [
   },
 ];
 
-const mainMenuItems = [
-  {
-    title: "대시보드",
-    href: "/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    title: "내 정보",
-    href: "/profile",
-    icon: UserCircle,
-  },
-];
-
 export function Sidebar() {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [user, setUser] = useState<SupabaseUser | null>(null);
+
+  useEffect(() => {
+    getCurrentUser().then(setUser);
+  }, []);
 
   return (
     <aside className={cn(
-      "flex-shrink-0 h-screen border-r bg-background print:hidden transition-all duration-300",
+      "flex-shrink-0 border-r bg-background print:hidden transition-[width] duration-300 fixed left-0 top-[73px] bottom-0 z-10",
       isCollapsed ? "w-16" : "w-64"
     )}>
         <div className="flex h-full flex-col">
-          {/* Header */}
-          <div className="border-b p-6 flex items-center justify-between">
-            {!isCollapsed && <h1 className="text-xl font-bold">Mad Story</h1>}
-            <button
-              onClick={() => setIsCollapsed(!isCollapsed)}
-              className={cn(
-                "p-1.5 rounded-md hover:bg-accent transition-colors",
-                isCollapsed && "mx-auto"
-              )}
-            >
-              {isCollapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
-            </button>
+          {/* User Info & Toggle */}
+          <div className="border-b p-3">
+            {!isCollapsed && user && (
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2 flex-1 min-w-0">
+                  {user.user_metadata?.avatar_url ? (
+                    <img
+                      src={user.user_metadata.avatar_url}
+                      alt={user.user_metadata?.name || 'User'}
+                      className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <UserCircle className="w-5 h-5 text-primary" />
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate">
+                      {user.user_metadata?.name || user.email}
+                    </p>
+                    <p className="text-xs text-muted-foreground truncate">
+                      {user.email}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setIsCollapsed(!isCollapsed)}
+                  className="p-1.5 rounded-md hover:bg-accent transition-colors flex-shrink-0"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+            {isCollapsed && user && (
+              <div className="relative flex justify-center items-center">
+                {user.user_metadata?.avatar_url ? (
+                  <img
+                    src={user.user_metadata.avatar_url}
+                    alt={user.user_metadata?.name || 'User'}
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                    <UserCircle className="w-6 h-6 text-primary" />
+                  </div>
+                )}
+                <button
+                  onClick={() => setIsCollapsed(!isCollapsed)}
+                  className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 hover:opacity-100 transition-opacity"
+                >
+                  <ChevronRight className="w-5 h-5 text-white" />
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Navigation */}
           <nav className="flex-1 overflow-y-auto p-4">
-            {/* 데이터 입력 */}
-            <div className="mb-8">
-              <h2 className={cn(
-                "mb-3 px-2 text-xs font-bold uppercase tracking-wider",
-                isCollapsed ? "text-center" : ""
-              )}>
-                {isCollapsed ? "📝" : "📝 데이터 입력"}
-              </h2>
-              <ul className="space-y-0.5">
-                {dataMenuItems.map((item) => {
-                  const Icon = item.icon;
+            <ul className="space-y-0.5">
+              {menuItems.map((item, index) => {
+                if ('divider' in item && item.divider) {
                   return (
-                    <li key={item.href}>
-                      <Link
-                        href={item.href}
-                        className={cn(
-                          "block rounded-md px-3 py-2.5 text-sm transition-all",
-                          pathname === item.href
-                            ? "bg-primary text-primary-foreground font-medium shadow-sm"
-                            : "text-foreground/70 hover:bg-accent hover:text-foreground",
-                          isCollapsed ? "flex justify-center px-2" : "flex items-center gap-3"
-                        )}
-                        title={isCollapsed ? item.title : undefined}
-                      >
-                        <Icon className="w-4 h-4 flex-shrink-0" />
-                        {!isCollapsed && <span>{item.title}</span>}
-                      </Link>
+                    <li key={`divider-${index}`} className="py-2">
+                      <div className="border-t border-border" />
                     </li>
                   );
-                })}
-              </ul>
-            </div>
+                }
 
-            {/* 문서 */}
-            <div className="mb-8">
-              <h2 className={cn(
-                "mb-3 px-2 text-xs font-bold uppercase tracking-wider",
-                isCollapsed ? "text-center" : ""
-              )}>
-                {isCollapsed ? "📄" : "📄 문서"}
-              </h2>
-              <ul className="space-y-0.5">
-                {documentMenuItems.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <li key={item.href}>
-                      <Link
-                        href={item.href}
-                        className={cn(
-                          "block rounded-md px-3 py-2.5 text-sm transition-all",
-                          pathname === item.href
-                            ? "bg-primary text-primary-foreground font-medium shadow-sm"
-                            : "text-foreground/70 hover:bg-accent hover:text-foreground",
-                          isCollapsed ? "flex justify-center px-2" : "flex items-center gap-3"
-                        )}
-                        title={isCollapsed ? item.title : undefined}
-                      >
-                        <Icon className="w-4 h-4 flex-shrink-0" />
-                        {!isCollapsed && <span>{item.title}</span>}
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-
-            {/* 메인 */}
-            <div className="pt-4 border-t">
-              <h2 className={cn(
-                "mb-3 px-2 text-xs font-bold uppercase tracking-wider",
-                isCollapsed ? "text-center" : ""
-              )}>
-                {isCollapsed ? "🏠" : "🏠 메인"}
-              </h2>
-              <ul className="space-y-0.5">
-                {mainMenuItems.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <li key={item.href}>
-                      <Link
-                        href={item.href}
-                        className={cn(
-                          "block rounded-md px-3 py-2.5 text-sm transition-all",
-                          pathname === item.href
-                            ? "bg-primary text-primary-foreground font-medium shadow-sm"
-                            : "text-foreground/70 hover:bg-accent hover:text-foreground",
-                          isCollapsed ? "flex justify-center px-2" : "flex items-center gap-3"
-                        )}
-                        title={isCollapsed ? item.title : undefined}
-                      >
-                        <Icon className="w-4 h-4 flex-shrink-0" />
-                        {!isCollapsed && <span>{item.title}</span>}
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
+                const Icon = item.icon!;
+                return (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href!}
+                      className={cn(
+                        "flex items-center rounded-md px-3 py-2.5 text-sm transition-colors",
+                        pathname === item.href
+                          ? "bg-primary text-primary-foreground font-medium shadow-sm"
+                          : "text-foreground/70 hover:bg-accent hover:text-foreground",
+                        isCollapsed ? "justify-center px-2" : "gap-3"
+                      )}
+                      title={isCollapsed ? item.title : undefined}
+                    >
+                      <Icon className="w-4 h-4 flex-shrink-0" />
+                      {!isCollapsed && <span className="whitespace-nowrap">{item.title}</span>}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
           </nav>
 
-          {/* Auth Button */}
-          <div className="border-t p-4">
-            {!isCollapsed && <AuthButton />}
-            {isCollapsed && (
-              <div className="text-center text-xs text-muted-foreground">👤</div>
-            )}
-          </div>
+          {/* Logout Button */}
+          {!isCollapsed && (
+            <div className="border-t p-4">
+              <AuthButton />
+            </div>
+          )}
         </div>
     </aside>
   );

@@ -3,6 +3,7 @@
 import { getProjects, createProject, updateProject, deleteProject } from "@/lib/api";
 import { useSupabaseData } from "@/hooks/useSupabaseData";
 import { useState } from "react";
+import { TopHeader } from "@/components/top-header";
 
 interface Project {
   id: string;
@@ -268,22 +269,34 @@ export default function ProjectsPage() {
   };
 
   if (loading) {
-    return <div className="p-8">로딩 중...</div>;
+    return (
+      <>
+        <TopHeader title="프로젝트" />
+        <div className="pt-[73px] pl-64 print:pt-0 print:pl-0">
+          <div className="p-8 flex items-center justify-center min-h-[400px]">
+            <div className="text-muted-foreground">로딩 중...</div>
+          </div>
+        </div>
+      </>
+    );
   }
 
   return (
-    <div className="p-8 flex justify-center">
-      <div className="w-full max-w-2xl">
-        <h1 className="text-3xl font-bold mb-6">프로젝트</h1>
-
-        <div className="mb-8">
+    <>
+      <TopHeader
+        title="프로젝트"
+        actions={
           <button
             onClick={() => setIsEditing(!isEditing)}
             className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
           >
             {isEditing ? "목록으로" : "프로젝트 추가"}
           </button>
-        </div>
+        }
+      />
+      <div className="pt-[73px] pl-64 print:pt-0 print:pl-0">
+        <div className="p-8 flex justify-center">
+          <div className="w-full max-w-2xl">
 
         {isEditing ? (
           <form onSubmit={handleSubmit} className="space-y-6 border p-6 rounded-lg">
@@ -467,7 +480,9 @@ export default function ProjectsPage() {
             )}
           </div>
         )}
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

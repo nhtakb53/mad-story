@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { getBasicInfo, updateBasicInfo } from "@/lib/api";
 import { useSupabaseData } from "@/hooks/useSupabaseData";
+import { TopHeader } from "@/components/top-header";
 
 interface BasicInfo {
   name: string;
@@ -94,14 +95,25 @@ export default function BasicInfoPage() {
   };
 
   if (loading) {
-    return <div className="p-8">로딩 중...</div>;
+    return (
+      <>
+        <TopHeader title="기본사항" />
+        <div className="pt-[73px] pl-64 print:pt-0 print:pl-0">
+          <div className="p-8 flex items-center justify-center min-h-[400px]">
+            <div className="text-muted-foreground">로딩 중...</div>
+          </div>
+        </div>
+      </>
+    );
   }
 
   return (
-    <div className="p-8 flex justify-center">
-      <div className="w-full max-w-2xl">
-        <h1 className="text-3xl font-bold mb-6">기본사항</h1>
-        <form onSubmit={handleSubmit} className="space-y-6 border p-6 rounded-lg">
+    <>
+      <TopHeader title="기본사항" />
+      <div className="pt-[73px] pl-64 print:pt-0 print:pl-0">
+        <div className="p-8 flex justify-center">
+          <div className="w-full max-w-2xl">
+            <form onSubmit={handleSubmit} className="space-y-6 border p-6 rounded-lg">
           <div>
             <label className="block text-sm font-medium mb-2">이름 *</label>
             <input
@@ -268,8 +280,10 @@ export default function BasicInfoPage() {
           >
             {saving ? "저장 중..." : "저장"}
           </button>
-        </form>
+            </form>
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

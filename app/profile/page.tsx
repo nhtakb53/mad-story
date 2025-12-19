@@ -2,18 +2,18 @@
 
 import Link from "next/link";
 import { User, Briefcase, Award, GraduationCap, FolderKanban, Settings } from "lucide-react";
+import { TopHeader } from "@/components/top-header";
 
 export default function ProfilePage() {
   return (
-    <div className="p-6 max-w-7xl">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold mb-1">내 정보</h1>
-        <p className="text-sm text-muted-foreground">
-          이력서 및 경력기술서에 사용될 정보를 관리하세요
-        </p>
-      </div>
-
-      {/* 정보 관리 카드 */}
+    <>
+      <TopHeader
+        title="내 정보"
+        description="이력서 및 경력기술서에 사용될 정보를 관리하세요"
+      />
+      <div className="pt-[73px] pl-64 print:pt-0 print:pl-0">
+        <div className="p-6 max-w-7xl">
+        {/* 정보 관리 카드 */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <Link
           href="/data/basic"
@@ -129,6 +129,8 @@ export default function ProfilePage() {
           입력한 정보는 자동으로 저장되며, 이력서와 경력기술서 작성 시 활용됩니다.
         </p>
       </div>
-    </div>
+        </div>
+      </div>
+    </>
   );
 }

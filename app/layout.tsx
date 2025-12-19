@@ -26,10 +26,10 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased flex`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {!hideSidebar && <Sidebar />}
-        <main className="flex-1 min-h-screen print:ml-0">
+        <main className="min-h-screen print:ml-0">
           {children}
         </main>
       </body>

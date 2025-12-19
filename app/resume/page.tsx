@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Mail, Phone, Github } from "lucide-react";
 import { getBasicInfo, getCareers, getSkills, getEducations, getProjects } from "@/lib/api";
 import { useSupabaseData } from "@/hooks/useSupabaseData";
+import { TopHeader } from "@/components/top-header";
 
 interface BasicInfo {
   name: string;
@@ -394,100 +395,111 @@ export default function ResumePage() {
   }
 
   if (loading) {
-    return <div className="p-8">로딩 중...</div>;
+    return (
+      <>
+        <TopHeader title="이력서" />
+        <div className="pt-[73px] pl-64 print:pt-0 print:pl-0">
+          <div className="p-8 flex items-center justify-center min-h-[400px]">
+            <div className="text-muted-foreground">로딩 중...</div>
+          </div>
+        </div>
+      </>
+    );
   }
 
   return (
-    <div className="p-8">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-3xl font-bold">이력서</h1>
-        <button
-          onClick={() => setIsPreview(true)}
-          className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
-        >
-          미리보기
-        </button>
-      </div>
-
-      <div className="mb-6 space-y-3">
-        <div className="flex items-center gap-3 text-sm">
-          <button
-            onClick={() => toggleSection("basic")}
-            className={`px-3 py-1.5 rounded-lg border transition-colors ${
-              selectedSections.basic
-                ? "bg-primary text-primary-foreground border-primary"
-                : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
-            }`}
-          >
-            기본사항
-          </button>
-        <button
-          onClick={() => toggleSection("career")}
-          className={`px-3 py-1.5 rounded-lg border transition-colors ${
-            selectedSections.career
-              ? "bg-primary text-primary-foreground border-primary"
-              : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
-          }`}
-        >
-          경력 ({careers?.length || 0})
-        </button>
-        <button
-          onClick={() => toggleSection("skills")}
-          className={`px-3 py-1.5 rounded-lg border transition-colors ${
-            selectedSections.skills
-              ? "bg-primary text-primary-foreground border-primary"
-              : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
-          }`}
-        >
-          보유기술 ({skills?.length || 0})
-        </button>
-        <button
-          onClick={() => toggleSection("education")}
-          className={`px-3 py-1.5 rounded-lg border transition-colors ${
-            selectedSections.education
-              ? "bg-primary text-primary-foreground border-primary"
-              : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
-          }`}
-        >
-          학력 ({educations?.length || 0})
-        </button>
-        <button
-          onClick={() => toggleSection("projects")}
-          className={`px-3 py-1.5 rounded-lg border transition-colors ${
-            selectedSections.projects
-              ? "bg-primary text-primary-foreground border-primary"
-              : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
-          }`}
-        >
-          프로젝트 ({projects?.length || 0})
-        </button>
-        </div>
-        <div className="flex items-center gap-2 text-sm">
-          <span className="text-gray-700 font-medium">정렬:</span>
-          <button
-            onClick={() => setSortOrder("latest")}
-            className={`px-3 py-1.5 rounded-lg border transition-colors ${
-              sortOrder === "latest"
-                ? "bg-primary text-primary-foreground border-primary"
-                : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
-            }`}
-          >
-            최신순
-          </button>
-          <button
-            onClick={() => setSortOrder("oldest")}
-            className={`px-3 py-1.5 rounded-lg border transition-colors ${
-              sortOrder === "oldest"
-                ? "bg-primary text-primary-foreground border-primary"
-                : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
-            }`}
-          >
-            과거순
-          </button>
-        </div>
-      </div>
-
-      {!basicInfo?.name && (
+    <>
+      <TopHeader
+        title="이력서"
+        actions={
+          <>
+            <div className="flex items-center gap-2 text-sm border-r pr-4">
+              <button
+                onClick={() => toggleSection("basic")}
+                className={`px-2 py-1 rounded border transition-colors ${
+                  selectedSections.basic
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
+                }`}
+              >
+                기본사항
+              </button>
+              <button
+                onClick={() => toggleSection("career")}
+                className={`px-2 py-1 rounded border transition-colors ${
+                  selectedSections.career
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
+                }`}
+              >
+                경력
+              </button>
+              <button
+                onClick={() => toggleSection("skills")}
+                className={`px-2 py-1 rounded border transition-colors ${
+                  selectedSections.skills
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
+                }`}
+              >
+                보유기술
+              </button>
+              <button
+                onClick={() => toggleSection("education")}
+                className={`px-2 py-1 rounded border transition-colors ${
+                  selectedSections.education
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
+                }`}
+              >
+                학력
+              </button>
+              <button
+                onClick={() => toggleSection("projects")}
+                className={`px-2 py-1 rounded border transition-colors ${
+                  selectedSections.projects
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
+                }`}
+              >
+                프로젝트
+              </button>
+            </div>
+            <div className="flex items-center gap-2 text-sm border-r pr-4">
+              <span className="text-gray-700 font-medium">정렬:</span>
+              <button
+                onClick={() => setSortOrder("latest")}
+                className={`px-2 py-1 rounded border transition-colors ${
+                  sortOrder === "latest"
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
+                }`}
+              >
+                최신순
+              </button>
+              <button
+                onClick={() => setSortOrder("oldest")}
+                className={`px-2 py-1 rounded border transition-colors ${
+                  sortOrder === "oldest"
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
+                }`}
+              >
+                과거순
+              </button>
+            </div>
+            <button
+              onClick={() => setIsPreview(true)}
+              className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
+            >
+              미리보기
+            </button>
+          </>
+        }
+      />
+      <div className="pt-[73px] pl-64 print:pt-0 print:pl-0">
+        <div className="p-6">
+          {!basicInfo?.name && (
         <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
           <p className="text-yellow-800">
             데이터를 입력하지 않았습니다.{" "}
@@ -498,9 +510,11 @@ export default function ResumePage() {
         </div>
       )}
 
-      <div className="bg-gray-50 p-8 rounded-lg">
-        <ResumeContent />
+          <div className="bg-gray-50 p-8 rounded-lg">
+            <ResumeContent />
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

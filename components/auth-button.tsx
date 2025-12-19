@@ -46,31 +46,12 @@ export function AuthButton() {
 
   if (user) {
     return (
-      <div className="space-y-3">
-        <div className="flex items-center gap-2">
-          {user.user_metadata?.avatar_url && (
-            <img
-              src={user.user_metadata.avatar_url}
-              alt={user.user_metadata?.name || 'User'}
-              className="w-10 h-10 rounded-full"
-            />
-          )}
-          <div className="flex-1 min-w-0">
-            <div className="text-sm font-medium truncate">
-              {user.user_metadata?.name || user.email}
-            </div>
-            <div className="text-xs text-muted-foreground truncate">
-              {user.email}
-            </div>
-          </div>
-        </div>
-        <button
-          onClick={handleSignOut}
-          className="w-full px-3 py-2 text-sm bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/90 transition-colors"
-        >
-          Sign Out
-        </button>
-      </div>
+      <button
+        onClick={handleSignOut}
+        className="w-full px-3 py-2 text-sm bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/90 transition-colors"
+      >
+        로그아웃
+      </button>
     )
   }
 

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { FileText, Briefcase, User, Calendar, TrendingUp, Award } from "lucide-react";
 import { getBasicInfo, getCareers, getSkills, getProjects, getEducations } from "@/lib/api";
 import { useSupabaseData } from "@/hooks/useSupabaseData";
+import { TopHeader } from "@/components/top-header";
 
 interface BasicInfo {
   name: string;
@@ -50,15 +51,14 @@ export default function DashboardPage() {
   const months = totalCareerMonths % 12;
 
   return (
-    <div className="p-6 max-w-7xl">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold mb-1">대시보드</h1>
-        <p className="text-sm text-muted-foreground">
-          안녕하세요, {basicInfo?.name || "개발자"}님! 👋
-        </p>
-      </div>
-
-      {/* 통계 카드 */}
+    <>
+      <TopHeader
+        title="대시보드"
+        description={`안녕하세요, ${basicInfo?.name || "개발자"}님! 👋`}
+      />
+      <div className="pt-[73px] pl-64 print:pt-0 print:pl-0">
+        <div className="p-6 max-w-7xl">
+        {/* 통계 카드 */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg p-4 text-white shadow">
           <div className="flex items-center justify-between mb-1">
@@ -190,6 +190,8 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
-    </div>
+        </div>
+      </div>
+    </>
   );
 }
