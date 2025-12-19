@@ -46,7 +46,7 @@ export function Sidebar() {
     <aside className="fixed left-0 top-0 h-screen w-64 border-r bg-background print:hidden">
       <div className="flex h-full flex-col">
         <div className="border-b p-6">
-          <h1 className="text-xl font-bold">개발자 이력</h1>
+          <h1 className="text-xl font-bold">Mad Story</h1>
         </div>
         <nav className="flex-1 overflow-y-auto p-4">
           <div className="mb-6">

@@ -1,7 +1,9 @@
-import type { Metadata } from "next";
+"use client";
+
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Sidebar } from "@/components/sidebar";
+import { usePathname } from "next/navigation";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,23 +15,21 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "개발자 이력",
-  description: "이력서 및 경력기술서",
-};
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const pathname = usePathname();
+  const isLandingPage = pathname === "/";
+
   return (
     <html lang="ko">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Sidebar />
-        <main className="ml-64 min-h-screen print:ml-0">
+        {!isLandingPage && <Sidebar />}
+        <main className={`${!isLandingPage ? "ml-64" : ""} min-h-screen print:ml-0`}>
           {children}
         </main>
       </body>
