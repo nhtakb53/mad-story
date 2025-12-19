@@ -9,12 +9,14 @@ interface Project {
   id: string;
   name: string;
   description: string;
-  startDate: string;
-  endDate: string;
+  start_date: string;
+  end_date: string;
   role: string;
-  techStack: string[];
+  tech_stack: string[];
   achievements: string[];
   url?: string;
+  logo_url?: string;
+  logo_fit?: "contain" | "cover";
 }
 import {
   DndContext,
@@ -70,14 +72,14 @@ function SortableProjectItem({ project, onEdit, onDelete }: { project: Project; 
             <h3 className="text-xl font-bold">{project.name}</h3>
             <p className="text-muted-foreground">{project.role}</p>
             <p className="text-sm text-muted-foreground">
-              {project.startDate} ~ {project.endDate}
+              {project.start_date} ~ {project.end_date}
             </p>
             {project.description && <p className="mt-4">{project.description}</p>}
-            {project.techStack && project.techStack.length > 0 && (
+            {project.tech_stack && project.tech_stack.length > 0 && (
               <div className="mt-4">
                 <h4 className="font-semibold mb-2">기술스택:</h4>
                 <div className="flex flex-wrap gap-2">
-                  {project.techStack.map((tech) => (
+                  {project.tech_stack.map((tech) => (
                     <span key={tech} className="px-2 py-1 bg-gray-100 rounded text-sm">
                       {tech}
                     </span>
@@ -131,12 +133,14 @@ export default function ProjectsPage() {
   const [formData, setFormData] = useState<Omit<Project, "id">>({
     name: "",
     description: "",
-    startDate: "",
-    endDate: "",
+    start_date: "",
+    end_date: "",
     role: "",
-    techStack: [],
+    tech_stack: [],
     achievements: [],
     url: "",
+    logo_url: "",
+    logo_fit: "contain",
   });
   const [techInput, setTechInput] = useState("");
   const [achievementInput, setAchievementInput] = useState("");
@@ -195,12 +199,14 @@ export default function ProjectsPage() {
     setFormData({
       name: "",
       description: "",
-      startDate: "",
-      endDate: "",
+      start_date: "",
+      end_date: "",
       role: "",
-      techStack: [],
+      tech_stack: [],
       achievements: [],
       url: "",
+      logo_url: "",
+      logo_fit: "contain",
     });
     setTechInput("");
     setAchievementInput("");
@@ -211,7 +217,7 @@ export default function ProjectsPage() {
   const handleEdit = (project: Project) => {
     setFormData({
       ...project,
-      techStack: project.techStack || [],
+      tech_stack: project.tech_stack || [],
       achievements: project.achievements || [],
     });
     setEditingId(project.id);
@@ -231,21 +237,21 @@ export default function ProjectsPage() {
   };
 
   const addTech = () => {
-    const techStack = formData.techStack || [];
-    if (techInput.trim() && !techStack.includes(techInput.trim())) {
+    const tech_stack = formData.tech_stack || [];
+    if (techInput.trim() && !tech_stack.includes(techInput.trim())) {
       setFormData({
         ...formData,
-        techStack: [...techStack, techInput.trim()],
+        tech_stack: [...tech_stack, techInput.trim()],
       });
       setTechInput("");
     }
   };
 
   const removeTech = (tech: string) => {
-    const techStack = formData.techStack || [];
+    const tech_stack = formData.tech_stack || [];
     setFormData({
       ...formData,
-      techStack: techStack.filter((t) => t !== tech),
+      tech_stack: tech_stack.filter((t) => t !== tech),
     });
   };
 
@@ -312,6 +318,44 @@ export default function ProjectsPage() {
               />
             </div>
             <div>
+              <label className="block text-sm font-medium mb-2">로고 URL</label>
+              <input
+                type="url"
+                value={formData.logo_url || ""}
+                onChange={(e) => setFormData({ ...formData, logo_url: e.target.value })}
+                placeholder="https://"
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+              <p className="text-xs text-gray-500 mt-1">프로젝트 로고 이미지 URL을 입력하세요</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">로고 표시 방식</label>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, logo_fit: "contain" })}
+                  className={`px-4 py-2 rounded border transition-colors ${
+                    formData.logo_fit === "contain"
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
+                  }`}
+                >
+                  전체 보기
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, logo_fit: "cover" })}
+                  className={`px-4 py-2 rounded border transition-colors ${
+                    formData.logo_fit === "cover"
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
+                  }`}
+                >
+                  영역 채우기
+                </button>
+              </div>
+            </div>
+            <div>
               <label className="block text-sm font-medium mb-2">프로젝트 설명 *</label>
               <textarea
                 required
@@ -326,8 +370,8 @@ export default function ProjectsPage() {
               <input
                 type="month"
                 required
-                value={formData.startDate}
-                onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                value={formData.start_date}
+                onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
@@ -336,8 +380,8 @@ export default function ProjectsPage() {
               <input
                 type="month"
                 required
-                value={formData.endDate}
-                onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                value={formData.end_date}
+                onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
@@ -372,7 +416,7 @@ export default function ProjectsPage() {
               </button>
             </div>
             <div className="flex flex-wrap gap-2">
-              {(formData.techStack || []).map((tech) => (
+              {(formData.tech_stack || []).map((tech) => (
                 <span
                   key={tech}
                   className="inline-flex items-center gap-1 bg-primary/10 px-3 py-1 rounded-full text-sm"
@@ -391,6 +435,7 @@ export default function ProjectsPage() {
           </div>
           <div>
             <label className="block text-sm font-medium mb-2">주요 성과</label>
+            <p className="text-xs text-gray-500 mb-2">들여쓰기: 스페이스 2개로 1단계, 4개로 2단계 들여쓰기 가능</p>
             <div className="flex gap-2 mb-2">
               <input
                 type="text"
@@ -398,7 +443,7 @@ export default function ProjectsPage() {
                 onChange={(e) => setAchievementInput(e.target.value)}
                 onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addAchievement())}
                 placeholder="성과를 입력하고 추가 버튼을 누르세요"
-                className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary font-mono"
               />
               <button
                 type="button"
@@ -409,18 +454,22 @@ export default function ProjectsPage() {
               </button>
             </div>
             <ul className="space-y-2">
-              {(formData.achievements || []).map((achievement, index) => (
-                <li key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
-                  <span>{achievement}</span>
-                  <button
-                    type="button"
-                    onClick={() => removeAchievement(index)}
-                    className="text-red-500 hover:text-red-700"
-                  >
-                    삭제
-                  </button>
-                </li>
-              ))}
+              {(formData.achievements || []).map((achievement, index) => {
+                const indent = achievement.match(/^(\s*)/)?.[0].length || 0;
+                const level = Math.min(Math.floor(indent / 2), 2);
+                return (
+                  <li key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded" style={{ paddingLeft: `${level * 1.5 + 0.5}rem` }}>
+                    <span className="font-mono">{achievement}</span>
+                    <button
+                      type="button"
+                      onClick={() => removeAchievement(index)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      삭제
+                    </button>
+                  </li>
+                );
+              })}
             </ul>
           </div>
           <div>

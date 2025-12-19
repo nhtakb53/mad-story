@@ -30,6 +30,8 @@ interface Career {
   current: boolean;
   description?: string;
   achievements: string[];
+  logo_url?: string;
+  logo_fit?: "contain" | "cover";
 }
 
 interface Skill {
@@ -47,6 +49,8 @@ interface Education {
   start_date: string;
   end_date: string;
   gpa?: string;
+  logo_url?: string;
+  logo_fit?: "contain" | "cover";
 }
 
 interface Project {
@@ -59,6 +63,8 @@ interface Project {
   tech_stack: string[];
   achievements: string[];
   url?: string;
+  logo_url?: string;
+  logo_fit?: "contain" | "cover";
 }
 
 const getLevelText = (level: number) => {
@@ -138,7 +144,7 @@ export default function ResumePage() {
   const ResumeContent = () => (
     <div className="a4-page bg-white">
       {selectedSections.basic && basicInfo && (
-        <div className="mb-4 p-4 bg-white border rounded-lg shadow-sm">
+        <div className="mb-4 p-4 bg-white border rounded-lg shadow-sm print:break-inside-avoid">
           <div className="flex flex-row-reverse items-start gap-4">
             {basicInfo.profile_image && (
                 <img
@@ -216,9 +222,9 @@ export default function ResumePage() {
 
       {selectedSections.career && sortedCareers.length > 0 && (
         <div className="mb-4 p-4 bg-white border rounded-lg shadow-sm">
-          <div className="flex justify-between items-end mb-3 pb-2 border-b">
+          <div className="flex items-center gap-2 mb-3 pb-2 border-b">
             <h2 className="text-base font-semibold text-gray-900">경력</h2>
-            <span className="text-xs bg-gray-800 text-white px-2 py-0.5 rounded-md font-medium">
+            <span className="text-xs px-2 py-0.5 rounded border border-gray-800 text-gray-800 bg-white">
               총 {years > 0 ? `${years}년 ${months}개월` : `${months}개월`}
             </span>
           </div>
@@ -231,71 +237,63 @@ export default function ResumePage() {
               const careerRemainingMonths = careerMonths % 12;
 
               return (
-                <div key={career.id} className="rounded-md bg-gray-50 p-3 shadow-sm border border-gray-200">
-                  <div className="mb-2">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="text-sm font-semibold text-gray-900">{career.company}</h3>
-                      <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-md font-semibold whitespace-nowrap">
-                        {career.start_date} ~ {career.current ? "현재" : career.end_date}
-                      </span>
-                      <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-md font-semibold">
-                        {careerYears > 0 ? `${careerYears}년 ${careerRemainingMonths}개월` : `${careerRemainingMonths}개월`}
-                      </span>
+                <div key={career.id} className="rounded-md bg-white p-3 shadow-sm border border-gray-200 print:break-inside-avoid">
+                  {/* 상단: 로고 + 제목/정보 */}
+                  <div className="flex items-start gap-3 mb-3">
+                    {/* 로고 영역 */}
+                    <div className="w-12 h-12 bg-white rounded flex items-center justify-center text-gray-400 text-xs font-bold shrink-0 overflow-hidden p-1">
+                      {career.logo_url ? (
+                        <img src={career.logo_url} alt={career.company} className={`w-full h-full ${career.logo_fit === "cover" ? "object-cover" : "object-contain"}`} />
+                      ) : (
+                        "LOGO"
+                      )}
                     </div>
-                    <p className="text-xs text-gray-700 font-medium">{career.position}</p>
+                    {/* 제목 및 정보 영역 */}
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <h3 className="text-sm font-semibold text-gray-900">{career.company}</h3>
+                        {career.current && (
+                          <span className="text-xs px-2 py-0.5 rounded border border-blue-500 text-blue-700 bg-blue-50 font-medium">
+                            재직중
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="text-xs px-2 py-0.5 rounded border border-gray-300 text-gray-700 bg-gray-50">
+                          {career.position}
+                        </span>
+                        <span className="text-xs px-2 py-0.5 rounded border border-gray-800 text-gray-800 bg-white">
+                          {career.start_date} ~ {career.current ? "현재" : career.end_date}
+                        </span>
+                        <span className="text-xs px-2 py-0.5 rounded border border-gray-800 text-gray-800 bg-white">{careerYears > 0 ? `${careerYears}년 ${careerRemainingMonths}개월` : `${careerRemainingMonths}개월`}</span>
+                      </div>
+                    </div>
                   </div>
-                  {career.description && (
-                    <div className="mb-3 pb-2 border-b border-gray-200">
+                  {/* 구분선 */}
+                  <div className="border-t border-gray-200 mb-3"></div>
+                  {/* 하단: 상세 내용 */}
+                  <div className="space-y-2">
+                    {career.description && (
                       <p className="text-xs text-gray-700 leading-relaxed">{career.description}</p>
-                    </div>
-                  )}
-                  {career.achievements && career.achievements.length > 0 && (
-                    <div className="rounded-md bg-white p-2.5 border border-gray-100">
+                    )}
+                    {career.achievements && career.achievements.length > 0 && (
                       <ul className="space-y-1.5 text-xs text-gray-700">
-                        {career.achievements.map((achievement, index) => (
-                          <li key={index} className="flex items-start">
-                            <span className="mr-2 text-gray-900 font-bold leading-none mt-0.5">•</span>
-                            <span className="flex-1">{achievement}</span>
-                          </li>
-                        ))}
+                        {career.achievements.map((achievement, index) => {
+                          const indent = achievement.match(/^(\s*)/)?.[0].length || 0;
+                          const level = Math.min(Math.floor(indent / 2), 2);
+                          return (
+                            <li key={index} className="flex items-start" style={{ paddingLeft: `${level * 0.75}rem` }}>
+                              <span className="mr-2 text-gray-900 font-bold leading-none mt-0.5">•</span>
+                              <span className="flex-1">{achievement.trim()}</span>
+                            </li>
+                          );
+                        })}
                       </ul>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               );
             })}
-          </div>
-        </div>
-      )}
-
-      {selectedSections.skills && Object.keys(groupedSkills).length > 0 && (
-        <div className="mb-4 p-4 bg-white border rounded-lg shadow-sm">
-          <h2 className="text-base font-semibold text-gray-900 mb-3 pb-2 border-b">보유 기술</h2>
-          <div className="bg-gray-50 p-2.5 rounded-md mb-3 border border-gray-200">
-            <div className="space-y-1 text-xs text-gray-700">
-              <p><span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-gray-800 text-white font-bold mr-2 text-xs">3</span>{getLevelText(3)}</p>
-              <p><span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-gray-800 text-white font-bold mr-2 text-xs">2</span>{getLevelText(2)}</p>
-              <p><span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-gray-800 text-white font-bold mr-2 text-xs">1</span>{getLevelText(1)}</p>
-            </div>
-          </div>
-          <div className="space-y-2.5">
-            {Object.entries(groupedSkills).map(([category, categorySkills]) => (
-              <div key={category} className="flex gap-3">
-                <div className="w-20 font-semibold text-xs text-gray-900">{category}</div>
-                <div className="flex-1">
-                  <div className="flex flex-wrap gap-2">
-                    {categorySkills.map((skill) => (
-                      <div key={skill.id} className="flex items-center gap-1 bg-gray-50 px-2 py-0.5 rounded-md border border-gray-200">
-                        <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-gray-800 text-white text-xs font-bold">
-                          {skill.level}
-                        </span>
-                        <span className="text-xs text-gray-900">{skill.name}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       )}
@@ -305,19 +303,71 @@ export default function ResumePage() {
           <h2 className="text-base font-semibold text-gray-900 mb-3 pb-2 border-b">학력</h2>
           <div className="space-y-3">
             {educations.map((education) => (
-              <div key={education.id} className="bg-gray-50 p-2.5 rounded-md border border-gray-200 shadow-sm">
-                <div className="flex items-center gap-2 mb-1">
-                  <h3 className="font-semibold text-xs text-gray-900">{education.school}</h3>
-                  <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-md font-semibold whitespace-nowrap">
-                    {education.start_date} ~ {education.end_date}
-                  </span>
+              <div key={education.id} className="bg-white p-3 rounded-md border border-gray-200 shadow-sm print:break-inside-avoid">
+                {/* 로고 + 제목/정보 */}
+                <div className="flex items-start gap-3">
+                  {/* 로고 영역 */}
+                  <div className="w-12 h-12 bg-white rounded flex items-center justify-center text-gray-400 text-xs font-bold shrink-0 overflow-hidden p-1">
+                    {education.logo_url ? (
+                      <img src={education.logo_url} alt={education.school} className={`w-full h-full ${education.logo_fit === "cover" ? "object-cover" : "object-contain"}`} />
+                    ) : (
+                      "LOGO"
+                    )}
+                  </div>
+                  {/* 제목 및 정보 영역 */}
+                  <div className="flex-1">
+                    <h3 className="text-sm font-semibold text-gray-900 mb-1.5">{education.school}</h3>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="text-xs px-2 py-0.5 rounded border border-gray-300 text-gray-700 bg-gray-50">
+                        {education.major} / {education.degree}
+                      </span>
+                      <span className="text-xs px-2 py-0.5 rounded border border-gray-800 text-gray-800 bg-white">
+                        {education.start_date} ~ {education.end_date}
+                      </span>
+                      {education.gpa && (
+                        <span className="text-xs px-2 py-0.5 rounded border border-gray-300 text-gray-700 bg-gray-50">
+                          학점: {education.gpa}
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                <p className="text-xs text-gray-700">{education.major} / {education.degree}</p>
-                {education.gpa && <p className="text-xs text-gray-600 mt-0.5">학점: {education.gpa}</p>}
               </div>
             ))}
           </div>
         </div>
+      )}
+
+      {selectedSections.skills && Object.keys(groupedSkills).length > 0 && (
+          <div className="mb-4 p-4 bg-white border rounded-lg shadow-sm print:break-inside-avoid">
+            <h2 className="text-base font-semibold text-gray-900 mb-3 pb-2 border-b">보유 기술</h2>
+            <div className="bg-gray-50 p-2.5 rounded-md mb-3 border border-gray-200">
+              <div className="space-y-1 text-xs text-gray-700">
+                <p><span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-gray-800 text-white font-bold mr-2 text-xs">3</span>{getLevelText(3)}</p>
+                <p><span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-gray-800 text-white font-bold mr-2 text-xs">2</span>{getLevelText(2)}</p>
+                <p><span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-gray-800 text-white font-bold mr-2 text-xs">1</span>{getLevelText(1)}</p>
+              </div>
+            </div>
+            <div className="space-y-2.5">
+              {Object.entries(groupedSkills).map(([category, categorySkills]) => (
+                  <div key={category} className="flex gap-3">
+                    <div className="w-20 font-semibold text-xs text-gray-900">{category}</div>
+                    <div className="flex-1">
+                      <div className="flex flex-wrap gap-2">
+                        {categorySkills.map((skill) => (
+                            <div key={skill.id} className="flex items-center gap-1 bg-gray-50 px-2 py-0.5 rounded-md border border-gray-200">
+                        <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-gray-800 text-white text-xs font-bold">
+                          {skill.level}
+                        </span>
+                              <span className="text-xs text-gray-900">{skill.name}</span>
+                            </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+              ))}
+            </div>
+          </div>
       )}
 
       {selectedSections.projects && sortedProjects.length > 0 && (
@@ -325,43 +375,64 @@ export default function ResumePage() {
           <h2 className="text-base font-semibold text-gray-900 mb-3 pb-2 border-b">프로젝트</h2>
           <div className="space-y-3">
             {sortedProjects.map((project) => (
-              <div key={project.id} className="rounded-md bg-gray-50 p-3 shadow-sm border border-gray-200">
-                <div className="mb-2">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h3 className="text-sm font-semibold text-gray-900">{project.name}</h3>
-                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-md font-semibold whitespace-nowrap">
-                      {project.start_date} ~ {project.end_date}
-                    </span>
+              <div key={project.id} className="rounded-md bg-white p-3 shadow-sm border border-gray-200 print:break-inside-avoid">
+                {/* 상단: 로고 + 제목/정보 */}
+                <div className="flex items-start gap-3 mb-3">
+                  {/* 로고 영역 */}
+                  <div className="w-12 h-12 bg-white rounded flex items-center justify-center text-gray-400 text-xs font-bold shrink-0 overflow-hidden p-1">
+                    {project.logo_url ? (
+                      <img src={project.logo_url} alt={project.name} className={`w-full h-full ${project.logo_fit === "cover" ? "object-cover" : "object-contain"}`} />
+                    ) : (
+                      "LOGO"
+                    )}
                   </div>
-                  <p className="text-xs text-gray-700 font-medium">{project.role}</p>
-                </div>
-                <div className="mb-3 pb-2 border-b border-gray-200">
-                  <p className="text-xs text-gray-700 leading-relaxed">{project.description}</p>
-                </div>
-                {project.tech_stack && project.tech_stack.length > 0 && (
-                  <div className="mb-3 pb-2 border-b border-gray-200">
-                    <span className="font-semibold text-xs text-gray-900 block mb-2">기술스택</span>
-                    <div className="flex flex-wrap gap-1.5">
-                      {project.tech_stack.map((tech, idx) => (
-                        <span key={idx} className="bg-gray-800 text-white px-2 py-0.5 rounded-md text-xs font-medium">
-                          {tech}
-                        </span>
-                      ))}
+                  {/* 제목 및 정보 영역 */}
+                  <div className="flex-1">
+                    <h3 className="text-sm font-semibold text-gray-900 mb-1.5">{project.name}</h3>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="text-xs px-2 py-0.5 rounded border border-gray-300 text-gray-700 bg-gray-50">
+                        {project.role}
+                      </span>
+                      <span className="text-xs px-2 py-0.5 rounded border border-gray-800 text-gray-800 bg-white">
+                        {project.start_date} ~ {project.end_date}
+                      </span>
                     </div>
                   </div>
-                )}
-                {project.achievements && project.achievements.length > 0 && (
-                  <div className="rounded-md bg-white p-2.5 border border-gray-100">
+                </div>
+                {/* 구분선 */}
+                <div className="border-t border-gray-200 mb-3"></div>
+                {/* 하단: 상세 내용 */}
+                <div className="space-y-2">
+                  {project.description && (
+                    <p className="text-xs text-gray-700 leading-relaxed">{project.description}</p>
+                  )}
+                  {project.tech_stack && project.tech_stack.length > 0 && (
+                    <div>
+                      <span className="font-semibold text-xs text-gray-900 block mb-1.5">기술스택</span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {project.tech_stack.map((tech, idx) => (
+                          <span key={idx} className="bg-gray-800 text-white px-2 py-0.5 rounded-md text-xs font-medium">
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {project.achievements && project.achievements.length > 0 && (
                     <ul className="space-y-1.5 text-xs text-gray-700">
-                      {project.achievements.map((achievement, index) => (
-                        <li key={index} className="flex items-start">
-                          <span className="mr-2 text-gray-900 font-bold leading-none mt-0.5">•</span>
-                          <span className="flex-1">{achievement}</span>
-                        </li>
-                      ))}
+                      {project.achievements.map((achievement, index) => {
+                        const indent = achievement.match(/^(\s*)/)?.[0].length || 0;
+                        const level = Math.min(Math.floor(indent / 2), 2);
+                        return (
+                          <li key={index} className="flex items-start" style={{ paddingLeft: `${level * 0.75}rem` }}>
+                            <span className="mr-2 text-gray-900 font-bold leading-none mt-0.5">•</span>
+                            <span className="flex-1">{achievement.trim()}</span>
+                          </li>
+                        );
+                      })}
                     </ul>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             ))}
           </div>
@@ -435,6 +506,16 @@ export default function ResumePage() {
                 경력
               </button>
               <button
+                  onClick={() => toggleSection("education")}
+                  className={`px-2 py-1 rounded border transition-colors ${
+                      selectedSections.education
+                          ? "bg-primary text-primary-foreground border-primary"
+                          : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
+                  }`}
+              >
+                학력
+              </button>
+              <button
                 onClick={() => toggleSection("skills")}
                 className={`px-2 py-1 rounded border transition-colors ${
                   selectedSections.skills
@@ -443,16 +524,6 @@ export default function ResumePage() {
                 }`}
               >
                 보유기술
-              </button>
-              <button
-                onClick={() => toggleSection("education")}
-                className={`px-2 py-1 rounded border transition-colors ${
-                  selectedSections.education
-                    ? "bg-primary text-primary-foreground border-primary"
-                    : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
-                }`}
-              >
-                학력
               </button>
               <button
                 onClick={() => toggleSection("projects")}

@@ -10,9 +10,11 @@ interface Education {
   school: string;
   major: string;
   degree: string;
-  startDate: string;
-  endDate: string;
+  start_date: string;
+  end_date: string;
   gpa?: string;
+  logo_url?: string;
+  logo_fit?: "contain" | "cover";
 }
 import {
   DndContext,
@@ -70,7 +72,7 @@ function SortableEducationItem({ education, onEdit, onDelete }: { education: Edu
               {education.major} ({education.degree})
             </p>
             <p className="text-sm text-muted-foreground">
-              {education.startDate} ~ {education.endDate}
+              {education.start_date} ~ {education.end_date}
             </p>
             {education.gpa && (
               <p className="text-sm text-muted-foreground">학점: {education.gpa}</p>
@@ -105,9 +107,11 @@ export default function EducationPage() {
     school: "",
     major: "",
     degree: "",
-    startDate: "",
-    endDate: "",
+    start_date: "",
+    end_date: "",
     gpa: "",
+    logo_url: "",
+    logo_fit: "contain",
   });
 
   const sensors = useSensors(
@@ -165,9 +169,11 @@ export default function EducationPage() {
       school: "",
       major: "",
       degree: "",
-      startDate: "",
-      endDate: "",
+      start_date: "",
+      end_date: "",
       gpa: "",
+      logo_url: "",
+      logo_fit: "contain",
     });
     setIsEditing(false);
     setEditingId(null);
@@ -235,6 +241,44 @@ export default function EducationPage() {
               />
             </div>
             <div>
+              <label className="block text-sm font-medium mb-2">로고 URL</label>
+              <input
+                type="url"
+                value={formData.logo_url || ""}
+                onChange={(e) => setFormData({ ...formData, logo_url: e.target.value })}
+                placeholder="https://"
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+              <p className="text-xs text-gray-500 mt-1">학교 로고 이미지 URL을 입력하세요</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">로고 표시 방식</label>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, logo_fit: "contain" })}
+                  className={`px-4 py-2 rounded border transition-colors ${
+                    formData.logo_fit === "contain"
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
+                  }`}
+                >
+                  전체 보기
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, logo_fit: "cover" })}
+                  className={`px-4 py-2 rounded border transition-colors ${
+                    formData.logo_fit === "cover"
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
+                  }`}
+                >
+                  영역 채우기
+                </button>
+              </div>
+            </div>
+            <div>
               <label className="block text-sm font-medium mb-2">전공 *</label>
               <input
                 type="text"
@@ -260,8 +304,8 @@ export default function EducationPage() {
               <input
                 type="month"
                 required
-                value={formData.startDate}
-                onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                value={formData.start_date}
+                onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
@@ -270,8 +314,8 @@ export default function EducationPage() {
               <input
                 type="month"
                 required
-                value={formData.endDate}
-                onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                value={formData.end_date}
+                onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>

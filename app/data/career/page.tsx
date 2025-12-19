@@ -32,6 +32,8 @@ interface Career {
   current: boolean;
   description?: string;
   achievements: string[];
+  logo_url?: string;
+  logo_fit?: "contain" | "cover";
 }
 
 function SortableCareerItem({ career, onEdit, onDelete }: { career: Career; onEdit: (career: Career) => void; onDelete: (id: string) => void }) {
@@ -115,6 +117,8 @@ export default function CareerPage() {
     current: false,
     description: "",
     achievements: [],
+    logo_url: "",
+    logo_fit: "contain",
   });
   const [achievementInput, setAchievementInput] = useState("");
   const [saving, setSaving] = useState(false);
@@ -167,6 +171,8 @@ export default function CareerPage() {
       current: false,
       description: "",
       achievements: [],
+      logo_url: "",
+      logo_fit: "contain",
     });
     setAchievementInput("");
     setIsEditing(false);
@@ -251,6 +257,44 @@ export default function CareerPage() {
               />
             </div>
             <div>
+              <label className="block text-sm font-medium mb-2">로고 URL</label>
+              <input
+                type="url"
+                value={formData.logo_url || ""}
+                onChange={(e) => setFormData({ ...formData, logo_url: e.target.value })}
+                placeholder="https://"
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+              <p className="text-xs text-gray-500 mt-1">회사 로고 이미지 URL을 입력하세요</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">로고 표시 방식</label>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, logo_fit: "contain" })}
+                  className={`px-4 py-2 rounded border transition-colors ${
+                    formData.logo_fit === "contain"
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
+                  }`}
+                >
+                  전체 보기
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, logo_fit: "cover" })}
+                  className={`px-4 py-2 rounded border transition-colors ${
+                    formData.logo_fit === "cover"
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
+                  }`}
+                >
+                  영역 채우기
+                </button>
+              </div>
+            </div>
+            <div>
               <label className="block text-sm font-medium mb-2">직책 *</label>
               <input
                 type="text"
@@ -305,6 +349,7 @@ export default function CareerPage() {
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">주요 성과</label>
+              <p className="text-xs text-gray-500 mb-2">들여쓰기: 스페이스 2개로 1단계, 4개로 2단계 들여쓰기 가능</p>
               <div className="flex gap-2 mb-2">
                 <input
                   type="text"
@@ -312,7 +357,7 @@ export default function CareerPage() {
                   onChange={(e) => setAchievementInput(e.target.value)}
                   onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addAchievement())}
                   placeholder="성과를 입력하고 추가 버튼을 누르세요"
-                  className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary font-mono"
                 />
                 <button
                   type="button"
@@ -323,18 +368,22 @@ export default function CareerPage() {
                 </button>
               </div>
               <ul className="space-y-2">
-                {formData.achievements?.map((achievement, index) => (
-                  <li key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
-                    <span>{achievement}</span>
-                    <button
-                      type="button"
-                      onClick={() => removeAchievement(index)}
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      삭제
-                    </button>
-                  </li>
-                ))}
+                {formData.achievements?.map((achievement, index) => {
+                  const indent = achievement.match(/^(\s*)/)?.[0].length || 0;
+                  const level = Math.min(Math.floor(indent / 2), 2);
+                  return (
+                    <li key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded" style={{ paddingLeft: `${level * 1.5 + 0.5}rem` }}>
+                      <span className="font-mono">{achievement}</span>
+                      <button
+                        type="button"
+                        onClick={() => removeAchievement(index)}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        삭제
+                      </button>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
             <div className="flex gap-2">
