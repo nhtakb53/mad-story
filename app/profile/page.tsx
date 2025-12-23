@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { User, Briefcase, Award, GraduationCap, FolderKanban, Settings } from "lucide-react";
+import { User, Briefcase, Award, GraduationCap, FolderKanban, FileQuestion, Settings } from "lucide-react";
 import { TopHeader } from "@/components/top-header";
 
 export default function ProfilePage() {
@@ -100,6 +100,24 @@ export default function ProfilePage() {
               </div>
               <p className="text-xs text-muted-foreground">
                 프로젝트명, 설명, 기간, 역할, 기술 스택, 주요 성과를 입력하세요
+              </p>
+            </Link>
+
+            <Link
+              href="/data/other-items"
+              className="group bg-white dark:bg-gray-900 rounded-lg p-4 shadow border border-gray-200 dark:border-gray-800 hover:border-teal-500 hover:shadow-md transition-all"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 bg-teal-100 dark:bg-teal-900/30 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <FileQuestion className="w-5 h-5 text-teal-600 dark:text-teal-400" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold">기타 사항</h3>
+                  <p className="text-xs text-muted-foreground">논문, 자격증 등</p>
+                </div>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                논문, 자격증, 수상 경력, 특허 등 다양한 이력을 입력하세요
               </p>
             </Link>
 

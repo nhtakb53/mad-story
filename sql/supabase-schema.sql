@@ -74,12 +74,27 @@ CREATE TABLE skills (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- Other Items Table (기타 사항: 논문, 자격증, 수상 등)
+CREATE TABLE other_items (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  title VARCHAR(255) NOT NULL,
+  category VARCHAR(100) NOT NULL, -- User-customizable type (논문, 자격증, 수상, etc.)
+  organization VARCHAR(255), -- Issuing organization (optional)
+  date VARCHAR(7), -- YYYY-MM format (optional)
+  description TEXT, -- Details/description (optional)
+  display_order INTEGER DEFAULT 0, -- For drag-and-drop ordering
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- Enable Row Level Security (RLS)
 ALTER TABLE basic_info ENABLE ROW LEVEL SECURITY;
 ALTER TABLE careers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE educations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
 ALTER TABLE skills ENABLE ROW LEVEL SECURITY;
+ALTER TABLE other_items ENABLE ROW LEVEL SECURITY;
 
 -- Create policies for public read access
 CREATE POLICY "Enable read access for all users" ON basic_info FOR SELECT USING (true);
@@ -87,6 +102,7 @@ CREATE POLICY "Enable read access for all users" ON careers FOR SELECT USING (tr
 CREATE POLICY "Enable read access for all users" ON educations FOR SELECT USING (true);
 CREATE POLICY "Enable read access for all users" ON projects FOR SELECT USING (true);
 CREATE POLICY "Enable read access for all users" ON skills FOR SELECT USING (true);
+CREATE POLICY "Enable read access for all users" ON other_items FOR SELECT USING (true);
 
 -- Create policies for authenticated users (insert, update, delete) - only own data
 CREATE POLICY "Users can insert own data" ON basic_info FOR INSERT WITH CHECK (auth.uid() = user_id);
@@ -109,6 +125,10 @@ CREATE POLICY "Users can insert own data" ON skills FOR INSERT WITH CHECK (auth.
 CREATE POLICY "Users can update own data" ON skills FOR UPDATE USING (auth.uid() = user_id);
 CREATE POLICY "Users can delete own data" ON skills FOR DELETE USING (auth.uid() = user_id);
 
+CREATE POLICY "Users can insert own data" ON other_items FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can update own data" ON other_items FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "Users can delete own data" ON other_items FOR DELETE USING (auth.uid() = user_id);
+
 -- Create indexes for better query performance
 CREATE INDEX idx_basic_info_user_id ON basic_info(user_id);
 CREATE INDEX idx_careers_user_id ON careers(user_id);
@@ -119,3 +139,7 @@ CREATE INDEX idx_projects_user_id ON projects(user_id);
 CREATE INDEX idx_projects_start_date ON projects(start_date DESC);
 CREATE INDEX idx_skills_user_id ON skills(user_id);
 CREATE INDEX idx_skills_category ON skills(category);
+CREATE INDEX idx_other_items_user_id ON other_items(user_id);
+CREATE INDEX idx_other_items_date ON other_items(date DESC);
+CREATE INDEX idx_other_items_category ON other_items(category);
+CREATE INDEX idx_other_items_display_order ON other_items(user_id, display_order);

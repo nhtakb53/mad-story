@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { AuthButton } from "./auth-button";
 import { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight, User, Briefcase, FolderKanban, Award, GraduationCap, FileText, FileCode, LayoutDashboard, UserCircle } from "lucide-react";
+import { ChevronLeft, ChevronRight, User, Briefcase, FolderKanban, Award, GraduationCap, FileQuestion, FileText, FileCode, LayoutDashboard, UserCircle } from "lucide-react";
 import { getCurrentUser } from "@/lib/auth";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 
@@ -45,6 +45,11 @@ const menuItems = [
     title: "학력",
     href: "/data/education",
     icon: GraduationCap,
+  },
+  {
+    title: "기타 사항",
+    href: "/data/other-items",
+    icon: FileQuestion,
   },
   { divider: true },
   {

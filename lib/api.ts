@@ -257,6 +257,63 @@ export async function deleteSkill(id: string) {
   if (error) throw error
 }
 
+// Other Items API
+export async function getOtherItems(userId?: string) {
+  let query = supabase.from('other_items').select('*')
+
+  if (userId) {
+    query = query.eq('user_id', userId)
+  }
+
+  const { data, error } = await query.order('display_order', { ascending: true })
+
+  if (error) throw error
+  return data
+}
+
+export async function createOtherItem(item: any) {
+  const user = await getCurrentUser()
+  if (!user) throw new Error('User not authenticated')
+
+  const { data, error } = await supabase
+    .from('other_items')
+    .insert({ ...item, user_id: user.id })
+    .select()
+    .single()
+
+  if (error) throw error
+  return data
+}
+
+export async function updateOtherItem(id: string, item: any) {
+  const user = await getCurrentUser()
+  if (!user) throw new Error('User not authenticated')
+
+  const { data, error } = await supabase
+    .from('other_items')
+    .update(item)
+    .eq('id', id)
+    .eq('user_id', user.id)
+    .select()
+    .single()
+
+  if (error) throw error
+  return data
+}
+
+export async function deleteOtherItem(id: string) {
+  const user = await getCurrentUser()
+  if (!user) throw new Error('User not authenticated')
+
+  const { error } = await supabase
+    .from('other_items')
+    .delete()
+    .eq('id', id)
+    .eq('user_id', user.id)
+
+  if (error) throw error
+}
+
 // Tech Stack Categories
 const TECH_CATEGORIES: Record<string, string[]> = {
   '프론트엔드': [
