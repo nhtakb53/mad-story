@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { Mail, Phone, Github } from "lucide-react";
-import { getBasicInfo, getCareers, getSkills, getEducations, getProjects, getTechStackStatsGrouped } from "@/lib/api";
+import { Mail, Phone, Github, GripVertical } from "lucide-react";
+import { getBasicInfo, getCareers, getSkills, getEducations, getOtherItems, getTechStackStatsGrouped } from "@/lib/api";
 import { useSupabaseData } from "@/hooks/useSupabaseData";
 import { TopHeader } from "@/components/top-header";
 import { TechStackTreemap } from "@/components/tech-stack-treemap";
@@ -54,18 +54,14 @@ interface Education {
   logo_fit?: "contain" | "cover";
 }
 
-interface Project {
+interface OtherItem {
   id: string;
-  name: string;
+  title: string;
+  category: string;
+  organization?: string;
+  date?: string;
   description?: string;
-  start_date: string;
-  end_date: string;
-  role?: string;
-  tech_stack: string[];
-  achievements: string[];
-  url?: string;
-  logo_url?: string;
-  logo_fit?: "contain" | "cover";
+  display_order?: number;
 }
 
 interface TechItem {
@@ -98,12 +94,74 @@ const highlightKeywords = (text: string) => {
   });
 };
 
+// 드래그 핸들 컴포넌트
+interface SpacingHandleProps {
+  value: number;
+  onChange: (newValue: number) => void;
+  label: string;
+  min?: number;
+  max?: number;
+}
+
+function SpacingHandle({ value, onChange, label, min = 4, max = 100 }: SpacingHandleProps) {
+  const [isDragging, setIsDragging] = useState(false);
+  const [currentValue, setCurrentValue] = useState(value);
+
+  useEffect(() => {
+    setCurrentValue(value);
+  }, [value]);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+
+    const startY = e.clientY;
+    const startValue = currentValue;
+
+    const handleMouseMove = (moveEvent: MouseEvent) => {
+      const deltaY = moveEvent.clientY - startY;
+      const newValue = Math.max(min, Math.min(max, Math.round(startValue + deltaY)));
+      setCurrentValue(newValue);
+      onChange(newValue);
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+  };
+
+  return (
+    <div
+      className={`group relative flex items-center justify-center transition-all print:hidden ${
+        isDragging ? 'bg-blue-100' : 'hover:bg-gray-100'
+      }`}
+      style={{ height: '24px', cursor: 'ns-resize', userSelect: 'none', marginTop: '-12px', marginBottom: '-12px' }}
+      onMouseDown={handleMouseDown}
+    >
+      <div className={`flex items-center gap-2 px-3 py-1 rounded-full border text-xs font-medium transition-opacity ${
+        isDragging
+          ? 'bg-blue-500 text-white border-blue-600 opacity-100'
+          : 'bg-white text-gray-600 border-gray-300 opacity-0 group-hover:opacity-100'
+      }`}>
+        <GripVertical size={12} />
+        <span>{label}: {currentValue}px</span>
+      </div>
+    </div>
+  );
+}
+
 export default function ResumePage() {
   const { data: basicInfo, loading: loadingBasic } = useSupabaseData<BasicInfo>(getBasicInfo, []);
   const { data: careers, loading: loadingCareers } = useSupabaseData<Career[]>(getCareers, []);
   const { data: skills, loading: loadingSkills } = useSupabaseData<Skill[]>(getSkills, []);
   const { data: educations, loading: loadingEducations } = useSupabaseData<Education[]>(getEducations, []);
-  const { data: projects, loading: loadingProjects } = useSupabaseData<Project[]>(getProjects, []);
+  const { data: otherItems, loading: loadingOtherItems } = useSupabaseData<OtherItem[]>(getOtherItems, []);
   const { data: techStats } = useSupabaseData<CategoryGroup[]>(getTechStackStatsGrouped, []);
 
   const [selectedSections, setSelectedSections] = useState({
@@ -111,23 +169,108 @@ export default function ResumePage() {
     career: true,
     skills: true,
     education: true,
-    projects: true,
+    otherItems: true,
   });
 
   const [isPreview, setIsPreview] = useState(false);
   const [sortOrder, setSortOrder] = useState<"latest" | "oldest">("latest");
 
+  // 섹션 간 간격 (기본값 16px = mb-4)
+  const [sectionSpacing, setSectionSpacing] = useState({
+    basic: 16,
+    career: 16,
+    education: 16,
+    skills: 16,
+    otherItems: 16,
+  });
+
+  // 내부 아이템 간 간격 - 각 아이템 ID별로 독립적으로 관리
+  const [careerItemSpacing, setCareerItemSpacing] = useState<Record<string, number>>({});
+  const [educationItemSpacing, setEducationItemSpacing] = useState<Record<string, number>>({});
+  const [otherItemsSpacing, setOtherItemsSpacing] = useState<Record<string, number>>({});
+
+  // 로컬스토리지에서 불러오기
+  useEffect(() => {
+    const savedSectionSpacing = localStorage.getItem('resume-section-spacing');
+    const savedCareerItemSpacing = localStorage.getItem('resume-career-item-spacing');
+    const savedEducationItemSpacing = localStorage.getItem('resume-education-item-spacing');
+    const savedOtherItemsSpacing = localStorage.getItem('resume-other-items-spacing');
+
+    if (savedSectionSpacing) {
+      try {
+        setSectionSpacing(JSON.parse(savedSectionSpacing));
+      } catch (e) {
+        console.error('Failed to parse section spacing:', e);
+      }
+    }
+
+    if (savedCareerItemSpacing) {
+      try {
+        setCareerItemSpacing(JSON.parse(savedCareerItemSpacing));
+      } catch (e) {
+        console.error('Failed to parse career item spacing:', e);
+      }
+    }
+
+    if (savedEducationItemSpacing) {
+      try {
+        setEducationItemSpacing(JSON.parse(savedEducationItemSpacing));
+      } catch (e) {
+        console.error('Failed to parse education item spacing:', e);
+      }
+    }
+
+    if (savedOtherItemsSpacing) {
+      try {
+        setOtherItemsSpacing(JSON.parse(savedOtherItemsSpacing));
+      } catch (e) {
+        console.error('Failed to parse other items spacing:', e);
+      }
+    }
+  }, []);
+
+  // 로컬스토리지에 저장
+  useEffect(() => {
+    localStorage.setItem('resume-section-spacing', JSON.stringify(sectionSpacing));
+  }, [sectionSpacing]);
+
+  useEffect(() => {
+    localStorage.setItem('resume-career-item-spacing', JSON.stringify(careerItemSpacing));
+  }, [careerItemSpacing]);
+
+  useEffect(() => {
+    localStorage.setItem('resume-education-item-spacing', JSON.stringify(educationItemSpacing));
+  }, [educationItemSpacing]);
+
+  useEffect(() => {
+    localStorage.setItem('resume-other-items-spacing', JSON.stringify(otherItemsSpacing));
+  }, [otherItemsSpacing]);
+
   const toggleSection = (section: keyof typeof selectedSections) => {
     setSelectedSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
 
-  const sortedCareers = careers ? [...careers].sort((a, b) => {
-    const dateA = new Date(a.start_date).getTime();
-    const dateB = new Date(b.start_date).getTime();
-    return sortOrder === "latest" ? dateB - dateA : dateA - dateB;
-  }) : [];
+  const resetSpacing = () => {
+    if (confirm('간격 설정을 초기화하시겠습니까?')) {
+      const defaultSectionSpacing = {
+        basic: 16,
+        career: 16,
+        education: 16,
+        skills: 16,
+        otherItems: 16,
+      };
+      setSectionSpacing(defaultSectionSpacing);
+      setCareerItemSpacing({});
+      setEducationItemSpacing({});
+      setOtherItemsSpacing({});
+      localStorage.removeItem('resume-section-spacing');
+      localStorage.removeItem('resume-career-item-spacing');
+      localStorage.removeItem('resume-education-item-spacing');
+      localStorage.removeItem('resume-other-items-spacing');
+    }
+  };
 
-  const sortedProjects = projects ? [...projects].sort((a, b) => {
+  const sortedCareers = careers ? [...careers].sort((a, b) => {
     const dateA = new Date(a.start_date).getTime();
     const dateB = new Date(b.start_date).getTime();
     return sortOrder === "latest" ? dateB - dateA : dateA - dateB;
@@ -151,279 +294,326 @@ export default function ResumePage() {
   const years = Math.floor(totalCareerMonths / 12);
   const months = totalCareerMonths % 12;
 
-  const loading = loadingBasic || loadingCareers || loadingSkills || loadingEducations || loadingProjects;
+  const loading = loadingBasic || loadingCareers || loadingSkills || loadingEducations || loadingOtherItems;
 
   const ResumeContent = () => (
     <div className="a4-page bg-white">
       {selectedSections.basic && basicInfo && (
-        <div className="mb-4 p-4 bg-white border rounded-lg shadow-sm print:break-inside-avoid">
-          <div className="flex flex-row-reverse items-start gap-4">
-            {basicInfo.profile_image && (
-                <img
-                    src={basicInfo.profile_image}
-                    alt={basicInfo.name}
-                    className="w-65 h-75 object-cover rounded-lg"
-                />
-            )}
-            <div className="flex-1">
-              <h1 className="text-3xl font-semibold text-gray-900 mb-0.5 tracking-tight mb-2">
-                {basicInfo.name || "이름 없음"}
-              </h1>
-              {(basicInfo.name_en || basicInfo.nickname) && (
-                  <p className="text-md text-gray-600 mb-3">
-                    {[basicInfo.name_en, basicInfo.nickname].filter(Boolean).join(" / ")}
-                  </p>
+        <>
+          <div className="p-4 bg-white border rounded-lg shadow-sm print:break-inside-avoid" style={{ marginBottom: `${sectionSpacing.basic}px` }}>
+            <div className="flex flex-row-reverse items-start gap-4">
+              {basicInfo.profile_image && (
+                  <img
+                      src={basicInfo.profile_image}
+                      alt={basicInfo.name}
+                      className="w-65 h-75 object-cover rounded-lg"
+                  />
               )}
-              <div className="flex flex-col gap-1 text-xs text-gray-600">
-                {basicInfo.email && (
-                    <div className="flex items-center gap-2">
-                      <Mail size={18} className="shrink-0" />
-                      <a href={`mailto:${basicInfo.email}`} className="hover:text-gray-900 transition-colors">
-                        {basicInfo.email}
-                      </a>
-                    </div>
+              <div className="flex-1">
+                <h1 className="text-3xl font-semibold text-gray-900 mb-0.5 tracking-tight mb-2">
+                  {basicInfo.name || "이름 없음"}
+                </h1>
+                {(basicInfo.name_en || basicInfo.nickname) && (
+                    <p className="text-md text-gray-600 mb-3">
+                      {[basicInfo.name_en, basicInfo.nickname].filter(Boolean).join(" / ")}
+                    </p>
                 )}
-                {basicInfo.phone && (
-                    <div className="flex items-center gap-2">
-                      <Phone size={18} className="shrink-0" />
-                      <span>{basicInfo.phone}</span>
-                    </div>
-                )}
-                {basicInfo.github && (
-                    <div className="flex items-center gap-2">
-                      <Github size={18} className="shrink-0" />
-                      <a
-                          href={
-                            basicInfo.github.startsWith("http")
-                                ? basicInfo.github
-                                : `https://github.com/${basicInfo.github.replace("@", "")}`
-                          }
-                          target="_blank"
-                          rel="noreferrer"
-                          className="hover:text-gray-900 transition-colors truncate"
-                          title={basicInfo.github}
+                <div className="flex flex-col gap-1 text-xs text-gray-600">
+                  {basicInfo.email && (
+                      <div className="flex items-center gap-2">
+                        <Mail size={18} className="shrink-0" />
+                        <a href={`mailto:${basicInfo.email}`} className="hover:text-gray-900 transition-colors">
+                          {basicInfo.email}
+                        </a>
+                      </div>
+                  )}
+                  {basicInfo.phone && (
+                      <div className="flex items-center gap-2">
+                        <Phone size={18} className="shrink-0" />
+                        <span>{basicInfo.phone}</span>
+                      </div>
+                  )}
+                  {basicInfo.github && (
+                      <div className="flex items-center gap-2">
+                        <Github size={18} className="shrink-0" />
+                        <a
+                            href={
+                              basicInfo.github.startsWith("http")
+                                  ? basicInfo.github
+                                  : `https://github.com/${basicInfo.github.replace("@", "")}`
+                            }
+                            target="_blank"
+                            rel="noreferrer"
+                            className="hover:text-gray-900 transition-colors truncate"
+                            title={basicInfo.github}
+                        >
+                          {basicInfo.github}
+                        </a>
+                      </div>
+                  )}
+                </div>
+                {basicInfo.tags && basicInfo.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-3">
+                    {basicInfo.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-sm"
                       >
-                        {basicInfo.github}
-                      </a>
-                    </div>
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
                 )}
               </div>
-              {basicInfo.tags && basicInfo.tags.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-3">
-                  {basicInfo.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-sm"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              )}
             </div>
+            {basicInfo.introduce && (
+              <div className="mt-4 pt-4 border-t border-gray-200">
+                <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
+                  {highlightKeywords(basicInfo.introduce)}
+                </p>
+              </div>
+            )}
           </div>
-          {basicInfo.introduce && (
-            <div className="mt-4 pt-4 border-t border-gray-200">
-              <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
-                {highlightKeywords(basicInfo.introduce)}
-              </p>
-            </div>
+          {!isPreview && (
+            <SpacingHandle
+              value={sectionSpacing.basic}
+              onChange={(val) => setSectionSpacing({ ...sectionSpacing, basic: val })}
+              label="기본사항 하단 간격"
+            />
           )}
-        </div>
+        </>
       )}
 
       {selectedSections.career && sortedCareers.length > 0 && (
-        <div className="mb-4 p-4 bg-white border rounded-lg shadow-sm">
-          <div className="flex items-center gap-2 mb-3 pb-2 border-b">
-            <h2 className="text-base font-semibold text-gray-900">경력</h2>
-            <span className="text-xs px-2 py-0.5 rounded border border-gray-800 text-gray-800 bg-white font-semibold">
-              총 {years > 0 ? `${years}년 ${months}개월` : `${months}개월`}
-            </span>
-          </div>
-          <div className="space-y-3">
-            {sortedCareers.map((career) => {
-              const start = new Date(career.start_date);
-              const end = career.current ? new Date() : new Date(career.end_date || career.start_date);
-              const careerMonths = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
-              const careerYears = Math.floor(careerMonths / 12);
-              const careerRemainingMonths = careerMonths % 12;
+        <>
+          <div className="p-4 bg-white border rounded-lg shadow-sm" style={{ marginBottom: `${sectionSpacing.career}px` }}>
+            <div className="flex items-center gap-2 mb-3 pb-2 border-b">
+              <h2 className="text-base font-semibold text-gray-900">경력</h2>
+              <span className="text-xs px-2 py-0.5 rounded border border-gray-800 text-gray-800 bg-white font-semibold">
+                총 {years > 0 ? `${years}년 ${months}개월` : `${months}개월`}
+              </span>
+            </div>
+            <div>
+              {sortedCareers.map((career, index) => {
+                const start = new Date(career.start_date);
+                const end = career.current ? new Date() : new Date(career.end_date || career.start_date);
+                const careerMonths = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
+                const careerYears = Math.floor(careerMonths / 12);
+                const careerRemainingMonths = careerMonths % 12;
 
-              return (
-                <div key={career.id} className="rounded-md bg-white p-3 shadow-sm border border-gray-200 print:break-inside-avoid">
-                  {/* 상단: 로고 + 제목/정보 */}
-                  <div className="flex items-start gap-3 mb-3">
-                    {/* 로고 영역 */}
-                    <div className="w-12 h-12 bg-white rounded flex items-center justify-center text-gray-400 text-xs font-bold shrink-0 overflow-hidden p-1">
-                      {career.logo_url ? (
-                        <img src={career.logo_url} alt={career.company} className={`w-full h-full ${career.logo_fit === "cover" ? "object-cover" : "object-contain"}`} />
-                      ) : (
-                        "LOGO"
-                      )}
-                    </div>
-                    {/* 제목 및 정보 영역 */}
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1.5">
-                        <h3 className="text-sm font-semibold text-gray-900">{career.company}</h3>
-                        {career.current && (
-                          <span className="text-xs px-2 py-0.5 rounded border border-blue-500 text-blue-700 bg-blue-50 font-medium">
-                            재직중
-                          </span>
+                return (
+                  <div key={career.id}>
+                    <div
+                      className="rounded-md bg-white p-3 shadow-sm border border-gray-200 print:break-inside-avoid"
+                      style={{ marginBottom: index < sortedCareers.length - 1 ? `${careerItemSpacing[career.id] || 12}px` : '0' }}
+                    >
+                      {/* 상단: 로고 + 제목/정보 */}
+                      <div className="flex items-start gap-3 mb-3">
+                        {/* 로고 영역 */}
+                        <div className="w-12 h-12 bg-white rounded flex items-center justify-center text-gray-400 text-xs font-bold shrink-0 overflow-hidden p-1">
+                          {career.logo_url ? (
+                            <img src={career.logo_url} alt={career.company} className={`w-full h-full ${career.logo_fit === "cover" ? "object-cover" : "object-contain"}`} />
+                          ) : (
+                            "LOGO"
+                          )}
+                        </div>
+                        {/* 제목 및 정보 영역 */}
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1.5">
+                            <h3 className="text-sm font-semibold text-gray-900">{career.company}</h3>
+                            {career.current && (
+                              <span className="text-xs px-2 py-0.5 rounded border border-blue-500 text-blue-700 bg-blue-50 font-medium">
+                                재직중
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="text-xs px-2 py-0.5 rounded border border-gray-300 text-gray-700 bg-gray-50 font-semibold">
+                              {career.position}
+                            </span>
+                            <span className="text-xs px-2 py-0.5 rounded border border-gray-800 text-gray-800 bg-white font-semibold">
+                              {career.start_date} ~ {career.current ? "현재" : career.end_date}
+                            </span>
+                            <span className="text-xs px-2 py-0.5 rounded border border-gray-800 text-gray-800 bg-white font-semibold">{careerYears > 0 ? `${careerYears}년 ${careerRemainingMonths}개월` : `${careerRemainingMonths}개월`}</span>
+                          </div>
+                        </div>
+                      </div>
+                      {/* 구분선 */}
+                      <div className="border-t border-gray-200 mb-3"></div>
+                      {/* 하단: 상세 내용 */}
+                      <div className="space-y-2">
+                        {career.description && (
+                          <p className="text-xs text-gray-700 leading-relaxed">{career.description}</p>
+                        )}
+                        {career.achievements && career.achievements.length > 0 && (
+                          <ul className="space-y-1.5 text-xs text-gray-700">
+                            {career.achievements.map((achievement, index) => {
+                              const indent = achievement.match(/^(\s*)/)?.[0].length || 0;
+                              const level = Math.min(Math.floor(indent / 2), 2);
+                              return (
+                                <li key={index} className="flex items-start" style={{ paddingLeft: `${level * 0.75}rem` }}>
+                                  <span className="mr-2 text-gray-900 font-bold leading-none mt-0.5">•</span>
+                                  <span className="flex-1">{achievement.trim()}</span>
+                                </li>
+                              );
+                            })}
+                          </ul>
                         )}
                       </div>
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className="text-xs px-2 py-0.5 rounded border border-gray-300 text-gray-700 bg-gray-50 font-semibold">
-                          {career.position}
-                        </span>
-                        <span className="text-xs px-2 py-0.5 rounded border border-gray-800 text-gray-800 bg-white font-semibold">
-                          {career.start_date} ~ {career.current ? "현재" : career.end_date}
-                        </span>
-                        <span className="text-xs px-2 py-0.5 rounded border border-gray-800 text-gray-800 bg-white font-semibold">{careerYears > 0 ? `${careerYears}년 ${careerRemainingMonths}개월` : `${careerRemainingMonths}개월`}</span>
-                      </div>
                     </div>
-                  </div>
-                  {/* 구분선 */}
-                  <div className="border-t border-gray-200 mb-3"></div>
-                  {/* 하단: 상세 내용 */}
-                  <div className="space-y-2">
-                    {career.description && (
-                      <p className="text-xs text-gray-700 leading-relaxed">{career.description}</p>
-                    )}
-                    {career.achievements && career.achievements.length > 0 && (
-                      <ul className="space-y-1.5 text-xs text-gray-700">
-                        {career.achievements.map((achievement, index) => {
-                          const indent = achievement.match(/^(\s*)/)?.[0].length || 0;
-                          const level = Math.min(Math.floor(indent / 2), 2);
-                          return (
-                            <li key={index} className="flex items-start" style={{ paddingLeft: `${level * 0.75}rem` }}>
-                              <span className="mr-2 text-gray-900 font-bold leading-none mt-0.5">•</span>
-                              <span className="flex-1">{achievement.trim()}</span>
-                            </li>
-                          );
-                        })}
-                      </ul>
+                    {/* 내부 아이템 간격 조절 핸들 */}
+                    {!isPreview && index < sortedCareers.length - 1 && (
+                      <SpacingHandle
+                        value={careerItemSpacing[career.id] || 12}
+                        onChange={(val) => setCareerItemSpacing({ ...careerItemSpacing, [career.id]: val })}
+                        label={`경력 ${index + 1}-${index + 2} 간격`}
+                        max={50}
+                      />
                     )}
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
-        </div>
+          {!isPreview && (
+            <SpacingHandle
+              value={sectionSpacing.career}
+              onChange={(val) => setSectionSpacing({ ...sectionSpacing, career: val })}
+              label="경력 하단 간격"
+            />
+          )}
+        </>
       )}
 
       {selectedSections.education && educations && educations.length > 0 && (
-        <div className="mb-4 p-4 bg-white border rounded-lg shadow-sm">
-          <h2 className="text-base font-semibold text-gray-900 mb-3 pb-2 border-b">학력</h2>
-          <div className="space-y-3">
-            {educations.map((education) => (
-              <div key={education.id} className="bg-white p-3 rounded-md border border-gray-200 shadow-sm print:break-inside-avoid">
-                {/* 로고 + 제목/정보 */}
-                <div className="flex items-start gap-3">
-                  {/* 로고 영역 */}
-                  <div className="w-12 h-12 bg-white rounded flex items-center justify-center text-gray-400 text-xs font-bold shrink-0 overflow-hidden p-1">
-                    {education.logo_url ? (
-                      <img src={education.logo_url} alt={education.school} className={`w-full h-full ${education.logo_fit === "cover" ? "object-cover" : "object-contain"}`} />
-                    ) : (
-                      "LOGO"
-                    )}
-                  </div>
-                  {/* 제목 및 정보 영역 */}
-                  <div className="flex-1">
-                    <h3 className="text-sm font-semibold text-gray-900 mb-1.5">{education.school}</h3>
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="text-xs px-2 py-0.5 rounded border border-gray-300 text-gray-700 bg-gray-50 font-semibold">
-                        {education.major} | {education.degree}
-                      </span>
-                      <span className="text-xs px-2 py-0.5 rounded border border-gray-800 text-gray-800 bg-white font-semibold">
-                        {education.start_date} ~ {education.end_date}
-                      </span>
-                      {education.gpa && (
-                        <span className="text-xs px-2 py-0.5 rounded border border-gray-300 text-gray-700 bg-gray-50 font-semibold">
-                          학점: {education.gpa}
-                        </span>
-                      )}
+        <>
+          <div className="p-4 bg-white border rounded-lg shadow-sm" style={{ marginBottom: `${sectionSpacing.education}px` }}>
+            <h2 className="text-base font-semibold text-gray-900 mb-3 pb-2 border-b">학력</h2>
+            <div>
+              {educations.map((education, index) => (
+                <div key={education.id}>
+                  <div
+                    className="bg-white p-3 rounded-md border border-gray-200 shadow-sm print:break-inside-avoid"
+                    style={{ marginBottom: index < educations.length - 1 ? `${educationItemSpacing[education.id] || 12}px` : '0' }}
+                  >
+                    {/* 로고 + 제목/정보 */}
+                    <div className="flex items-start gap-3">
+                      {/* 로고 영역 */}
+                      <div className="w-12 h-12 bg-white rounded flex items-center justify-center text-gray-400 text-xs font-bold shrink-0 overflow-hidden p-1">
+                        {education.logo_url ? (
+                          <img src={education.logo_url} alt={education.school} className={`w-full h-full ${education.logo_fit === "cover" ? "object-cover" : "object-contain"}`} />
+                        ) : (
+                          "LOGO"
+                        )}
+                      </div>
+                      {/* 제목 및 정보 영역 */}
+                      <div className="flex-1">
+                        <h3 className="text-sm font-semibold text-gray-900 mb-1.5">{education.school}</h3>
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className="text-xs px-2 py-0.5 rounded border border-gray-300 text-gray-700 bg-gray-50 font-semibold">
+                            {education.major} | {education.degree}
+                          </span>
+                          <span className="text-xs px-2 py-0.5 rounded border border-gray-800 text-gray-800 bg-white font-semibold">
+                            {education.start_date} ~ {education.end_date}
+                          </span>
+                          {education.gpa && (
+                            <span className="text-xs px-2 py-0.5 rounded border border-gray-300 text-gray-700 bg-gray-50 font-semibold">
+                              학점: {education.gpa}
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </div>
+                  {/* 내부 아이템 간격 조절 핸들 */}
+                  {!isPreview && index < educations.length - 1 && (
+                    <SpacingHandle
+                      value={educationItemSpacing[education.id] || 12}
+                      onChange={(val) => setEducationItemSpacing({ ...educationItemSpacing, [education.id]: val })}
+                      label={`학력 ${index + 1}-${index + 2} 간격`}
+                      max={50}
+                    />
+                  )}
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+          {!isPreview && (
+            <SpacingHandle
+              value={sectionSpacing.education}
+              onChange={(val) => setSectionSpacing({ ...sectionSpacing, education: val })}
+              label="학력 하단 간격"
+            />
+          )}
+        </>
       )}
 
       {selectedSections.skills && techStats && techStats.length > 0 && (
-          <div className="mb-4 p-4 bg-white border rounded-lg shadow-sm print:break-inside-avoid">
+        <>
+          <div className="p-4 bg-white border rounded-lg shadow-sm print:break-inside-avoid" style={{ marginBottom: `${sectionSpacing.skills}px` }}>
             <h2 className="text-base font-semibold text-gray-900 mb-3 pb-2 border-b">보유 기술</h2>
             <TechStackTreemap data={techStats} height={300} showLegend={true} />
           </div>
+          {!isPreview && (
+            <SpacingHandle
+              value={sectionSpacing.skills}
+              onChange={(val) => setSectionSpacing({ ...sectionSpacing, skills: val })}
+              label="보유기술 하단 간격"
+            />
+          )}
+        </>
       )}
 
-      {selectedSections.projects && sortedProjects.length > 0 && (
-        <div className="mb-4 p-4 bg-white border rounded-lg shadow-sm">
-          <h2 className="text-base font-semibold text-gray-900 mb-3 pb-2 border-b">프로젝트</h2>
-          <div className="space-y-3">
-            {sortedProjects.map((project) => (
-              <div key={project.id} className="rounded-md bg-white p-3 shadow-sm border border-gray-200 print:break-inside-avoid">
-                {/* 상단: 로고 + 제목/정보 */}
-                <div className="flex items-start gap-3 mb-3">
-                  {/* 로고 영역 */}
-                  <div className="w-12 h-12 bg-white rounded flex items-center justify-center text-gray-400 text-xs font-bold shrink-0 overflow-hidden p-1">
-                    {project.logo_url ? (
-                      <img src={project.logo_url} alt={project.name} className={`w-full h-full ${project.logo_fit === "cover" ? "object-cover" : "object-contain"}`} />
-                    ) : (
-                      "LOGO"
+      {selectedSections.otherItems && otherItems && otherItems.length > 0 && (
+        <>
+          <div className="p-4 bg-white border rounded-lg shadow-sm" style={{ marginBottom: `${sectionSpacing.otherItems}px` }}>
+            <h2 className="text-base font-semibold text-gray-900 mb-3 pb-2 border-b">기타 사항</h2>
+            <div>
+              {otherItems.map((item, index) => (
+                <div key={item.id}>
+                  <div
+                    className="bg-white p-3 rounded-md border border-gray-200 shadow-sm print:break-inside-avoid"
+                    style={{ marginBottom: index < otherItems.length - 1 ? `${otherItemsSpacing[item.id] || 12}px` : '0' }}
+                  >
+                    <div className="flex items-start gap-2 mb-2">
+                      <span className="px-2 py-0.5 bg-primary/10 text-primary text-xs rounded font-medium shrink-0">
+                        {item.category}
+                      </span>
+                      {item.date && (
+                        <span className="text-xs px-2 py-0.5 rounded border border-gray-800 text-gray-800 bg-white font-semibold">
+                          {item.date}
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="text-sm font-semibold text-gray-900 mb-1">{item.title}</h3>
+                    {item.organization && (
+                      <p className="text-xs text-gray-600 mb-2">{item.organization}</p>
+                    )}
+                    {item.description && (
+                      <p className="text-xs text-gray-700 leading-relaxed whitespace-pre-wrap">{item.description}</p>
                     )}
                   </div>
-                  {/* 제목 및 정보 영역 */}
-                  <div className="flex-1">
-                    <h3 className="text-sm font-semibold text-gray-900 mb-1.5">{project.name}</h3>
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="text-xs px-2 py-0.5 rounded border border-gray-300 text-gray-700 bg-gray-50 font-semibold">
-                        {project.role}
-                      </span>
-                      <span className="text-xs px-2 py-0.5 rounded border border-gray-800 text-gray-800 bg-white font-semibold">
-                        {project.start_date} ~ {project.end_date}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                {/* 구분선 */}
-                <div className="border-t border-gray-200 mb-3"></div>
-                {/* 하단: 상세 내용 */}
-                <div className="space-y-2">
-                  {project.description && (
-                    <p className="text-xs text-gray-700 leading-relaxed">{project.description}</p>
-                  )}
-                  {project.tech_stack && project.tech_stack.length > 0 && (
-                    <div>
-                      <span className="font-semibold text-xs text-gray-900 block mb-1.5">기술스택</span>
-                      <div className="flex flex-wrap gap-1.5">
-                        {project.tech_stack.map((tech, idx) => (
-                          <span key={idx} className="bg-gray-800 text-white px-2 py-0.5 rounded-md text-xs font-medium">
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  {project.achievements && project.achievements.length > 0 && (
-                    <ul className="space-y-1.5 text-xs text-gray-700">
-                      {project.achievements.map((achievement, index) => {
-                        const indent = achievement.match(/^(\s*)/)?.[0].length || 0;
-                        const level = Math.min(Math.floor(indent / 2), 2);
-                        return (
-                          <li key={index} className="flex items-start" style={{ paddingLeft: `${level * 0.75}rem` }}>
-                            <span className="mr-2 text-gray-900 font-bold leading-none mt-0.5">•</span>
-                            <span className="flex-1">{achievement.trim()}</span>
-                          </li>
-                        );
-                      })}
-                    </ul>
+                  {/* 내부 아이템 간격 조절 핸들 */}
+                  {!isPreview && index < otherItems.length - 1 && (
+                    <SpacingHandle
+                      value={otherItemsSpacing[item.id] || 12}
+                      onChange={(val) => setOtherItemsSpacing({ ...otherItemsSpacing, [item.id]: val })}
+                      label={`기타 ${index + 1}-${index + 2} 간격`}
+                      max={50}
+                    />
                   )}
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+          {!isPreview && (
+            <SpacingHandle
+              value={sectionSpacing.otherItems}
+              onChange={(val) => setSectionSpacing({ ...sectionSpacing, otherItems: val })}
+              label="기타사항 하단 간격"
+            />
+          )}
+        </>
       )}
     </div>
   );
@@ -445,8 +635,27 @@ export default function ResumePage() {
             PDF 저장
           </button>
         </div>
-        <div className="py-8 flex justify-center print:p-0">
-          <ResumeContent />
+        <div className="py-8 flex justify-center print:p-0 relative">
+          <div className="relative">
+            <ResumeContent />
+            {/* A4 페이지 구분선 (297mm 간격) */}
+            <div className="absolute inset-0 pointer-events-none print:hidden" style={{
+              backgroundImage: 'repeating-linear-gradient(to bottom, transparent 0, transparent calc(297mm - 1px), #ef4444 calc(297mm - 1px), #ef4444 297mm)',
+              backgroundSize: '100% 297mm',
+              backgroundPosition: 'top'
+            }}>
+              {/* 페이지 번호 표시 */}
+              {[1, 2, 3, 4, 5].map((pageNum) => (
+                <div
+                  key={pageNum}
+                  className="absolute right-0 bg-red-500 text-white text-xs px-2 py-1 rounded-l font-medium"
+                  style={{ top: `calc(${pageNum} * 297mm - 297mm + 10px)` }}
+                >
+                  Page {pageNum}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -513,14 +722,14 @@ export default function ResumePage() {
                 보유기술
               </button>
               <button
-                onClick={() => toggleSection("projects")}
+                onClick={() => toggleSection("otherItems")}
                 className={`px-2 py-1 rounded border transition-colors ${
-                  selectedSections.projects
+                  selectedSections.otherItems
                     ? "bg-primary text-primary-foreground border-primary"
                     : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
                 }`}
               >
-                프로젝트
+                기타사항
               </button>
             </div>
             <div className="flex items-center gap-2 text-sm border-r pr-4">
@@ -546,6 +755,13 @@ export default function ResumePage() {
                 과거순
               </button>
             </div>
+            <button
+              onClick={resetSpacing}
+              className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm border border-gray-300"
+              title="간격 설정 초기화"
+            >
+              간격 초기화
+            </button>
             <button
               onClick={() => setIsPreview(true)}
               className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"

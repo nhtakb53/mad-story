@@ -147,6 +147,11 @@
 
   @page {
     size: A4;
+    margin: 4mm 0 0 0; /* 상단 4mm, 좌우하단 0 */
+  }
+
+  /* 첫 페이지는 기존 여백 유지 */
+  @page :first {
     margin: 0;
   }
 }
