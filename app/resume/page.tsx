@@ -174,6 +174,8 @@ export default function ResumePage() {
 
   const [isPreview, setIsPreview] = useState(false);
   const [sortOrder, setSortOrder] = useState<"latest" | "oldest">("latest");
+  const [pageCount, setPageCount] = useState(0);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   // 섹션 간 간격 (기본값 16px = mb-4)
   const [sectionSpacing, setSectionSpacing] = useState({
@@ -245,6 +247,22 @@ export default function ResumePage() {
   useEffect(() => {
     localStorage.setItem('resume-other-items-spacing', JSON.stringify(otherItemsSpacing));
   }, [otherItemsSpacing]);
+
+  // 페이지 수 계산
+  useEffect(() => {
+    if (isPreview && contentRef.current) {
+      const calculatePages = () => {
+        const contentHeight = contentRef.current?.offsetHeight || 0;
+        const mmToPx = 3.7795275591; // 1mm = 3.7795275591px at 96dpi
+        const pageHeightPx = 297 * mmToPx; // A4 height in pixels
+        const pages = Math.ceil(contentHeight / pageHeightPx);
+        setPageCount(pages);
+      };
+
+      // 컨텐츠 렌더링 후 계산
+      setTimeout(calculatePages, 100);
+    }
+  }, [isPreview, basicInfo, careers, skills, educations, otherItems, techStats, selectedSections, sectionSpacing, careerItemSpacing, educationItemSpacing, otherItemsSpacing]);
 
   const toggleSection = (section: keyof typeof selectedSections) => {
     setSelectedSections((prev) => ({ ...prev, [section]: !prev[section] }));
@@ -548,6 +566,54 @@ export default function ResumePage() {
         </>
       )}
 
+      {selectedSections.otherItems && otherItems && otherItems.length > 0 && (
+        <>
+          <div style={{ marginBottom: `${sectionSpacing.otherItems}px` }}>
+            {otherItems.map((item, index) => (
+              <div key={item.id}>
+                <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm print:break-inside-avoid"
+                  style={{ marginBottom: index < otherItems.length - 1 ? `${otherItemsSpacing[item.id] || 16}px` : '0' }}
+                >
+                  <div className="flex items-center gap-2 mb-2 pb-2 border-b">
+                    <h3 className="text-base font-semibold text-gray-900">
+                      {item.category}
+                    </h3>
+                    {item.date && (
+                      <span className="text-xs px-2 py-0.5 rounded border border-gray-800 text-gray-800 bg-white font-semibold">
+                        {item.date}
+                      </span>
+                    )}
+                  </div>
+                  <h4 className="text-sm font-semibold text-gray-900 mb-1">{item.title}</h4>
+                  {item.organization && (
+                    <p className="text-xs text-gray-600 mb-2">{item.organization}</p>
+                  )}
+                  {item.description && (
+                    <p className="text-xs text-gray-700 leading-relaxed whitespace-pre-wrap">{item.description}</p>
+                  )}
+                </div>
+                {/* 내부 아이템 간격 조절 핸들 */}
+                {!isPreview && index < otherItems.length - 1 && (
+                  <SpacingHandle
+                    value={otherItemsSpacing[item.id] || 12}
+                    onChange={(val) => setOtherItemsSpacing({ ...otherItemsSpacing, [item.id]: val })}
+                    label={`기타 ${index + 1}-${index + 2} 간격`}
+                    max={50}
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+          {!isPreview && (
+            <SpacingHandle
+              value={sectionSpacing.otherItems}
+              onChange={(val) => setSectionSpacing({ ...sectionSpacing, otherItems: val })}
+              label="기타사항 하단 간격"
+            />
+          )}
+        </>
+      )}
+
       {selectedSections.skills && techStats && techStats.length > 0 && (
         <>
           <div className="p-4 bg-white border rounded-lg shadow-sm print:break-inside-avoid" style={{ marginBottom: `${sectionSpacing.skills}px` }}>
@@ -559,58 +625,6 @@ export default function ResumePage() {
               value={sectionSpacing.skills}
               onChange={(val) => setSectionSpacing({ ...sectionSpacing, skills: val })}
               label="보유기술 하단 간격"
-            />
-          )}
-        </>
-      )}
-
-      {selectedSections.otherItems && otherItems && otherItems.length > 0 && (
-        <>
-          <div className="p-4 bg-white border rounded-lg shadow-sm" style={{ marginBottom: `${sectionSpacing.otherItems}px` }}>
-            <h2 className="text-base font-semibold text-gray-900 mb-3 pb-2 border-b">기타 사항</h2>
-            <div>
-              {otherItems.map((item, index) => (
-                <div key={item.id}>
-                  <div
-                    className="bg-white p-3 rounded-md border border-gray-200 shadow-sm print:break-inside-avoid"
-                    style={{ marginBottom: index < otherItems.length - 1 ? `${otherItemsSpacing[item.id] || 12}px` : '0' }}
-                  >
-                    <div className="flex items-start gap-2 mb-2">
-                      <span className="px-2 py-0.5 bg-primary/10 text-primary text-xs rounded font-medium shrink-0">
-                        {item.category}
-                      </span>
-                      {item.date && (
-                        <span className="text-xs px-2 py-0.5 rounded border border-gray-800 text-gray-800 bg-white font-semibold">
-                          {item.date}
-                        </span>
-                      )}
-                    </div>
-                    <h3 className="text-sm font-semibold text-gray-900 mb-1">{item.title}</h3>
-                    {item.organization && (
-                      <p className="text-xs text-gray-600 mb-2">{item.organization}</p>
-                    )}
-                    {item.description && (
-                      <p className="text-xs text-gray-700 leading-relaxed whitespace-pre-wrap">{item.description}</p>
-                    )}
-                  </div>
-                  {/* 내부 아이템 간격 조절 핸들 */}
-                  {!isPreview && index < otherItems.length - 1 && (
-                    <SpacingHandle
-                      value={otherItemsSpacing[item.id] || 12}
-                      onChange={(val) => setOtherItemsSpacing({ ...otherItemsSpacing, [item.id]: val })}
-                      label={`기타 ${index + 1}-${index + 2} 간격`}
-                      max={50}
-                    />
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-          {!isPreview && (
-            <SpacingHandle
-              value={sectionSpacing.otherItems}
-              onChange={(val) => setSectionSpacing({ ...sectionSpacing, otherItems: val })}
-              label="기타사항 하단 간격"
             />
           )}
         </>
@@ -637,7 +651,9 @@ export default function ResumePage() {
         </div>
         <div className="py-8 flex justify-center print:p-0 relative">
           <div className="relative">
-            <ResumeContent />
+            <div ref={contentRef}>
+              <ResumeContent />
+            </div>
             {/* A4 페이지 구분선 (297mm 간격) */}
             <div className="absolute inset-0 pointer-events-none print:hidden" style={{
               backgroundImage: 'repeating-linear-gradient(to bottom, transparent 0, transparent calc(297mm - 1px), #ef4444 calc(297mm - 1px), #ef4444 297mm)',
@@ -645,13 +661,13 @@ export default function ResumePage() {
               backgroundPosition: 'top'
             }}>
               {/* 페이지 번호 표시 */}
-              {[1, 2, 3, 4, 5].map((pageNum) => (
+              {Array.from({ length: pageCount }, (_, i) => i).map((pageNum) => (
                 <div
                   key={pageNum}
                   className="absolute right-0 bg-red-500 text-white text-xs px-2 py-1 rounded-l font-medium"
-                  style={{ top: `calc(${pageNum} * 297mm - 297mm + 10px)` }}
+                  style={{ top: `calc(${pageNum} * 297mm + 10px)` }}
                 >
-                  Page {pageNum}
+                  Page {pageNum + 1}
                 </div>
               ))}
             </div>
