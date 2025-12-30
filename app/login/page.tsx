@@ -4,6 +4,8 @@ import { signInWithGitHub } from '@/lib/auth'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { getSession } from '@/lib/auth'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -39,20 +41,17 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="max-w-md w-full space-y-8 p-10 bg-white rounded-xl shadow-lg">
-        <div className="text-center">
-          <h2 className="mt-6 text-3xl font-bold text-gray-900">
-            Welcome Back
-          </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Sign in to manage your dev history
-          </p>
-        </div>
+      <Card className="max-w-md w-full shadow-lg">
+        <CardHeader className="text-center space-y-2">
+          <CardTitle className="text-3xl font-bold">Welcome Back</CardTitle>
+          <CardDescription>Sign in to manage your dev history</CardDescription>
+        </CardHeader>
 
-        <div className="mt-8 space-y-6">
-          <button
+        <CardContent className="space-y-6">
+          <Button
             onClick={handleLogin}
-            className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-transparent text-sm font-medium rounded-lg text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors"
+            variant="default"
+            className="w-full gap-3 bg-gray-900 hover:bg-gray-800"
           >
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
               <path
@@ -62,13 +61,13 @@ export default function LoginPage() {
               />
             </svg>
             Sign in with GitHub
-          </button>
+          </Button>
 
-          <div className="text-center text-xs text-gray-500">
+          <p className="text-center text-xs text-muted-foreground">
             By signing in, you agree to our Terms of Service and Privacy Policy
-          </div>
-        </div>
-      </div>
+          </p>
+        </CardContent>
+      </Card>
     </div>
   )
 }

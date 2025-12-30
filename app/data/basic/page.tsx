@@ -5,6 +5,11 @@ import { X } from "lucide-react";
 import { getBasicInfo, updateBasicInfo } from "@/lib/api";
 import { useSupabaseData } from "@/hooks/useSupabaseData";
 import { TopHeader } from "@/components/top-header";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 interface BasicInfo {
   name: string;
@@ -113,90 +118,83 @@ export default function BasicInfoPage() {
       <div className="pt-[65px] pl-64 print:pt-0 print:pl-0">
         <div className="p-8 flex justify-center">
           <div className="w-full max-w-2xl">
-            <form onSubmit={handleSubmit} className="space-y-6 border p-6 rounded-lg">
+            <Card>
+              <CardContent className="pt-6">
+                <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-sm font-medium mb-2">이름 *</label>
-            <input
+            <Input
               type="text"
               required
               value={formData.name}
               onChange={(e) => handleChange("name", e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
           <div>
             <label className="block text-sm font-medium mb-2">영문 이름</label>
-            <input
+            <Input
               type="text"
               value={formData.name_en || ""}
               onChange={(e) => handleChange("name_en", e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
           <div>
             <label className="block text-sm font-medium mb-2">닉네임</label>
-            <input
+            <Input
               type="text"
               value={formData.nickname || ""}
               onChange={(e) => handleChange("nickname", e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
           <div>
             <label className="block text-sm font-medium mb-2">이메일 *</label>
-            <input
+            <Input
               type="email"
               required
               value={formData.email}
               onChange={(e) => handleChange("email", e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
           <div>
             <label className="block text-sm font-medium mb-2">전화번호 *</label>
-            <input
+            <Input
               type="tel"
               required
               value={formData.phone}
               onChange={(e) => handleChange("phone", e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
           <div>
             <label className="block text-sm font-medium mb-2">GitHub</label>
-            <input
+            <Input
               type="url"
               value={formData.github || ""}
               onChange={(e) => handleChange("github", e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
           <div>
             <label className="block text-sm font-medium mb-2">블로그</label>
-            <input
+            <Input
               type="url"
               value={formData.blog || ""}
               onChange={(e) => handleChange("blog", e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
           <div>
             <label className="block text-sm font-medium mb-2">LinkedIn</label>
-            <input
+            <Input
               type="url"
               value={formData.linkedin || ""}
               onChange={(e) => handleChange("linkedin", e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
           <div>
             <label className="block text-sm font-medium mb-2">자기소개</label>
-            <textarea
+            <Textarea
               value={formData.introduce || ""}
               onChange={(e) => handleChange("introduce", e.target.value)}
               rows={4}
               placeholder="자기소개를 입력하세요. 강조하고 싶은 키워드는 **키워드** 형식으로 입력하세요."
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
             />
             <p className="text-xs text-gray-500 mt-1">
               예시: 저는 **사용자 경험**을 중시하는 **프론트엔드 개발자**입니다.
@@ -205,27 +203,27 @@ export default function BasicInfoPage() {
           <div>
             <label className="block text-sm font-medium mb-2">나를 표현하는 태그</label>
             <div className="flex gap-2 mb-2">
-              <input
+              <Input
                 type="text"
                 value={tagInput}
                 onChange={(e) => setTagInput(e.target.value)}
                 onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addTag())}
                 placeholder="태그를 입력하고 추가 버튼을 누르세요"
-                className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
               />
-              <button
+              <Button
                 type="button"
                 onClick={addTag}
-                className="px-4 py-2 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/90"
+                variant="secondary"
               >
                 추가
-              </button>
+              </Button>
             </div>
             <div className="flex flex-wrap gap-2">
               {formData.tags?.map((tag) => (
-                <span
+                <Badge
                   key={tag}
-                  className="inline-flex items-center gap-1 bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium"
+                  variant="secondary"
+                  className="inline-flex items-center gap-1 bg-blue-100 text-blue-700"
                 >
                   {tag}
                   <button
@@ -235,7 +233,7 @@ export default function BasicInfoPage() {
                   >
                     <X size={14} />
                   </button>
-                </span>
+                </Badge>
               ))}
             </div>
           </div>
@@ -253,12 +251,11 @@ export default function BasicInfoPage() {
               </div>
               <div>
                 <label className="block text-xs text-muted-foreground mb-1">또는 URL 입력</label>
-                <input
+                <Input
                   type="text"
                   value={formData.profile_image || ""}
                   onChange={(e) => handleChange("profile_image", e.target.value)}
                   placeholder="https://example.com/profile.jpg"
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
               {formData.profile_image && (
@@ -273,14 +270,15 @@ export default function BasicInfoPage() {
               )}
             </div>
           </div>
-          <button
+          <Button
             type="submit"
             disabled={saving}
-            className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50"
           >
             {saving ? "저장 중..." : "저장"}
-          </button>
-            </form>
+          </Button>
+                </form>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>

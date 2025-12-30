@@ -3,6 +3,9 @@
 import { useEffect, useState } from 'react'
 import { getCurrentUser, getSession } from '@/lib/auth'
 import { CheckCircle2, Copy } from 'lucide-react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 
 export default function AdminPage() {
   const [userId, setUserId] = useState<string>('')
@@ -58,12 +61,9 @@ export default function AdminPage() {
           <p className="text-gray-600 mb-4">
             GitHub 계정으로 로그인해주세요.
           </p>
-          <a
-            href="/"
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            홈으로 돌아가기
-          </a>
+          <Button asChild>
+            <a href="/">홈으로 돌아가기</a>
+          </Button>
         </div>
       </div>
     )
@@ -72,10 +72,11 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
-        <div className="bg-white shadow rounded-lg p-6">
-          <h1 className="text-3xl font-bold mb-6">관리자 정보</h1>
-
-          <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-3xl">관리자 정보</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
             {/* 사용자 정보 */}
             <div>
               <h2 className="text-lg font-semibold mb-4">사용자 정보</h2>
@@ -106,9 +107,9 @@ export default function AdminPage() {
                 <div className="flex-1 p-3 bg-gray-100 rounded-lg font-mono text-sm break-all">
                   {userId}
                 </div>
-                <button
+                <Button
                   onClick={copyToClipboard}
-                  className="flex items-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  className="gap-2"
                   title="클립보드에 복사"
                 >
                   {copied ? (
@@ -122,16 +123,19 @@ export default function AdminPage() {
                       <span>복사</span>
                     </>
                   )}
-                </button>
+                </Button>
               </div>
             </div>
 
             {/* 마이그레이션 안내 */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <h3 className="font-semibold text-blue-900 mb-2">
-                데이터 마이그레이션 방법
-              </h3>
-              <ol className="list-decimal list-inside space-y-2 text-sm text-blue-800">
+            <Card className="bg-blue-50 border-blue-200">
+              <CardHeader>
+                <CardTitle className="text-blue-900 text-base">
+                  데이터 마이그레이션 방법
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ol className="list-decimal list-inside space-y-2 text-sm text-blue-800">
                 <li>위의 User ID를 복사합니다</li>
                 <li>터미널을 열고 프로젝트 디렉토리로 이동합니다</li>
                 <li>
@@ -142,40 +146,39 @@ export default function AdminPage() {
                 </li>
                 <li>마이그레이션이 완료될 때까지 기다립니다</li>
               </ol>
-              <div className="mt-3 text-xs text-blue-700">
-                자세한 내용은 <code className="bg-white px-1 py-0.5 rounded">MIGRATION.md</code> 파일을 참고하세요.
-              </div>
-            </div>
+                <div className="mt-3 text-xs text-blue-700">
+                  자세한 내용은 <code className="bg-white px-1 py-0.5 rounded">MIGRATION.md</code> 파일을 참고하세요.
+                </div>
+              </CardContent>
+            </Card>
 
             {/* 환경 변수 확인 */}
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-              <h3 className="font-semibold text-yellow-900 mb-2">
-                ⚠️ 마이그레이션 전 확인사항
-              </h3>
-              <ul className="list-disc list-inside space-y-1 text-sm text-yellow-800">
+            <Card className="bg-yellow-50 border-yellow-200">
+              <CardHeader>
+                <CardTitle className="text-yellow-900 text-base">
+                  ⚠️ 마이그레이션 전 확인사항
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="list-disc list-inside space-y-1 text-sm text-yellow-800">
                 <li>.env.local 파일에 SUPABASE_SERVICE_KEY가 설정되어 있는지 확인</li>
                 <li>Supabase 대시보드에서 스키마(테이블)가 생성되어 있는지 확인</li>
                 <li>tsx 패키지가 설치되어 있는지 확인 (npm install)</li>
-              </ul>
-            </div>
+                </ul>
+              </CardContent>
+            </Card>
 
             {/* 링크 */}
             <div className="flex gap-3">
-              <a
-                href="/"
-                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
-              >
-                홈으로
-              </a>
-              <a
-                href="/data/basic"
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                데이터 관리
-              </a>
+              <Button variant="secondary" asChild>
+                <a href="/">홈으로</a>
+              </Button>
+              <Button asChild>
+                <a href="/data/basic">데이터 관리</a>
+              </Button>
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   )

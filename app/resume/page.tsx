@@ -7,6 +7,9 @@ import { getBasicInfo, getCareers, getSkills, getEducations, getOtherItems, getT
 import { useSupabaseData } from "@/hooks/useSupabaseData";
 import { TopHeader } from "@/components/top-header";
 import { TechStackTreemap } from "@/components/tech-stack-treemap";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 interface BasicInfo {
   name: string;
@@ -318,80 +321,82 @@ export default function ResumePage() {
     <div className="a4-page bg-white">
       {selectedSections.basic && basicInfo && (
         <>
-          <div className="p-4 bg-white border rounded-lg shadow-sm print:break-inside-avoid" style={{ marginBottom: `${sectionSpacing.basic}px` }}>
-            <div className="flex flex-row-reverse items-start gap-4">
-              {basicInfo.profile_image && (
-                  <img
-                      src={basicInfo.profile_image}
-                      alt={basicInfo.name}
-                      className="w-65 h-75 object-cover rounded-lg"
-                  />
-              )}
-              <div className="flex-1">
-                <h1 className="text-3xl font-semibold text-gray-900 mb-0.5 tracking-tight mb-2">
-                  {basicInfo.name || "이름 없음"}
-                </h1>
-                {(basicInfo.name_en || basicInfo.nickname) && (
-                    <p className="text-md text-gray-600 mb-3">
-                      {[basicInfo.name_en, basicInfo.nickname].filter(Boolean).join(" / ")}
-                    </p>
+          <Card className="print:break-inside-avoid" style={{ marginBottom: `${sectionSpacing.basic}px` }}>
+            <CardContent className="p-4">
+              <div className="flex flex-row-reverse items-start gap-4">
+                {basicInfo.profile_image && (
+                    <img
+                        src={basicInfo.profile_image}
+                        alt={basicInfo.name}
+                        className="w-65 h-75 object-cover rounded-lg"
+                    />
                 )}
-                <div className="flex flex-col gap-1 text-xs text-gray-600">
-                  {basicInfo.email && (
-                      <div className="flex items-center gap-2">
-                        <Mail size={18} className="shrink-0" />
-                        <a href={`mailto:${basicInfo.email}`} className="hover:text-gray-900 transition-colors">
-                          {basicInfo.email}
-                        </a>
-                      </div>
+                <div className="flex-1">
+                  <h1 className="text-3xl font-semibold text-gray-900 mb-0.5 tracking-tight mb-2">
+                    {basicInfo.name || "이름 없음"}
+                  </h1>
+                  {(basicInfo.name_en || basicInfo.nickname) && (
+                      <p className="text-md text-gray-600 mb-3">
+                        {[basicInfo.name_en, basicInfo.nickname].filter(Boolean).join(" / ")}
+                      </p>
                   )}
-                  {basicInfo.phone && (
-                      <div className="flex items-center gap-2">
-                        <Phone size={18} className="shrink-0" />
-                        <span>{basicInfo.phone}</span>
-                      </div>
-                  )}
-                  {basicInfo.github && (
-                      <div className="flex items-center gap-2">
-                        <Github size={18} className="shrink-0" />
-                        <a
-                            href={
-                              basicInfo.github.startsWith("http")
-                                  ? basicInfo.github
-                                  : `https://github.com/${basicInfo.github.replace("@", "")}`
-                            }
-                            target="_blank"
-                            rel="noreferrer"
-                            className="hover:text-gray-900 transition-colors truncate"
-                            title={basicInfo.github}
+                  <div className="flex flex-col gap-1 text-xs text-gray-600">
+                    {basicInfo.email && (
+                        <div className="flex items-center gap-2">
+                          <Mail size={18} className="shrink-0" />
+                          <a href={`mailto:${basicInfo.email}`} className="hover:text-gray-900 transition-colors">
+                            {basicInfo.email}
+                          </a>
+                        </div>
+                    )}
+                    {basicInfo.phone && (
+                        <div className="flex items-center gap-2">
+                          <Phone size={18} className="shrink-0" />
+                          <span>{basicInfo.phone}</span>
+                        </div>
+                    )}
+                    {basicInfo.github && (
+                        <div className="flex items-center gap-2">
+                          <Github size={18} className="shrink-0" />
+                          <a
+                              href={
+                                basicInfo.github.startsWith("http")
+                                    ? basicInfo.github
+                                    : `https://github.com/${basicInfo.github.replace("@", "")}`
+                              }
+                              target="_blank"
+                              rel="noreferrer"
+                              className="hover:text-gray-900 transition-colors truncate"
+                              title={basicInfo.github}
+                          >
+                            {basicInfo.github}
+                          </a>
+                        </div>
+                    )}
+                  </div>
+                  {basicInfo.tags && basicInfo.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-3">
+                      {basicInfo.tags.map((tag) => (
+                        <Badge
+                          key={tag}
+                          className="bg-gradient-to-r from-blue-500 to-purple-500 text-white"
                         >
-                          {basicInfo.github}
-                        </a>
-                      </div>
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
                   )}
                 </div>
-                {basicInfo.tags && basicInfo.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-3">
-                    {basicInfo.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-sm"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
               </div>
-            </div>
-            {basicInfo.introduce && (
-              <div className="mt-4 pt-4 border-t border-gray-200">
-                <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
-                  {highlightKeywords(basicInfo.introduce)}
-                </p>
-              </div>
-            )}
-          </div>
+              {basicInfo.introduce && (
+                <div className="mt-4 pt-4 border-t border-gray-200">
+                  <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
+                    {highlightKeywords(basicInfo.introduce)}
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
           {!isPreview && (
             <SpacingHandle
               value={sectionSpacing.basic}
@@ -404,13 +409,14 @@ export default function ResumePage() {
 
       {selectedSections.career && sortedCareers.length > 0 && (
         <>
-          <div className="p-4 bg-white border rounded-lg shadow-sm" style={{ marginBottom: `${sectionSpacing.career}px` }}>
-            <div className="flex items-center gap-2 mb-3 pb-2 border-b">
-              <h2 className="text-base font-semibold text-gray-900">경력</h2>
-              <span className="text-xs px-2 py-0.5 rounded border border-gray-800 text-gray-800 bg-white font-semibold">
-                총 {years > 0 ? `${years}년 ${months}개월` : `${months}개월`}
-              </span>
-            </div>
+          <Card style={{ marginBottom: `${sectionSpacing.career}px` }}>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2 mb-3 pb-2 border-b">
+                <h2 className="text-base font-semibold text-gray-900">경력</h2>
+                <Badge variant="outline">
+                  총 {years > 0 ? `${years}년 ${months}개월` : `${months}개월`}
+                </Badge>
+              </div>
             <div>
               {sortedCareers.map((career, index) => {
                 const start = new Date(career.start_date);
@@ -440,19 +446,19 @@ export default function ResumePage() {
                           <div className="flex items-center gap-2 mb-1.5">
                             <h3 className="text-sm font-semibold text-gray-900">{career.company}</h3>
                             {career.current && (
-                              <span className="text-xs px-2 py-0.5 rounded border border-blue-500 text-blue-700 bg-blue-50 font-medium">
+                              <Badge className="bg-blue-50 text-blue-700 border-blue-500">
                                 재직중
-                              </span>
+                              </Badge>
                             )}
                           </div>
                           <div className="flex items-center gap-1.5 flex-wrap">
-                            <span className="text-xs px-2 py-0.5 rounded border border-gray-300 text-gray-700 bg-gray-50 font-semibold">
+                            <Badge variant="secondary">
                               {career.position}
-                            </span>
-                            <span className="text-xs px-2 py-0.5 rounded border border-gray-800 text-gray-800 bg-white font-semibold">
+                            </Badge>
+                            <Badge variant="outline">
                               {career.start_date} ~ {career.current ? "현재" : career.end_date}
-                            </span>
-                            <span className="text-xs px-2 py-0.5 rounded border border-gray-800 text-gray-800 bg-white font-semibold">{careerYears > 0 ? `${careerYears}년 ${careerRemainingMonths}개월` : `${careerRemainingMonths}개월`}</span>
+                            </Badge>
+                            <Badge variant="outline">{careerYears > 0 ? `${careerYears}년 ${careerRemainingMonths}개월` : `${careerRemainingMonths}개월`}</Badge>
                           </div>
                         </div>
                       </div>
@@ -492,7 +498,8 @@ export default function ResumePage() {
                 );
               })}
             </div>
-          </div>
+            </CardContent>
+          </Card>
           {!isPreview && (
             <SpacingHandle
               value={sectionSpacing.career}
@@ -505,8 +512,9 @@ export default function ResumePage() {
 
       {selectedSections.education && educations && educations.length > 0 && (
         <>
-          <div className="p-4 bg-white border rounded-lg shadow-sm" style={{ marginBottom: `${sectionSpacing.education}px` }}>
-            <h2 className="text-base font-semibold text-gray-900 mb-3 pb-2 border-b">학력</h2>
+          <Card style={{ marginBottom: `${sectionSpacing.education}px` }}>
+            <CardContent className="p-4">
+              <h2 className="text-base font-semibold text-gray-900 mb-3 pb-2 border-b">학력</h2>
             <div>
               {educations.map((education, index) => (
                 <div key={education.id}>
@@ -528,16 +536,16 @@ export default function ResumePage() {
                       <div className="flex-1">
                         <h3 className="text-sm font-semibold text-gray-900 mb-1.5">{education.school}</h3>
                         <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="text-xs px-2 py-0.5 rounded border border-gray-300 text-gray-700 bg-gray-50 font-semibold">
+                          <Badge variant="secondary">
                             {education.major} | {education.degree}
-                          </span>
-                          <span className="text-xs px-2 py-0.5 rounded border border-gray-800 text-gray-800 bg-white font-semibold">
+                          </Badge>
+                          <Badge variant="outline">
                             {education.start_date} ~ {education.end_date}
-                          </span>
+                          </Badge>
                           {education.gpa && (
-                            <span className="text-xs px-2 py-0.5 rounded border border-gray-300 text-gray-700 bg-gray-50 font-semibold">
+                            <Badge variant="secondary">
                               학점: {education.gpa}
-                            </span>
+                            </Badge>
                           )}
                         </div>
                       </div>
@@ -555,7 +563,8 @@ export default function ResumePage() {
                 </div>
               ))}
             </div>
-          </div>
+            </CardContent>
+          </Card>
           {!isPreview && (
             <SpacingHandle
               value={sectionSpacing.education}
@@ -571,27 +580,29 @@ export default function ResumePage() {
           <div style={{ marginBottom: `${sectionSpacing.otherItems}px` }}>
             {otherItems.map((item, index) => (
               <div key={item.id}>
-                <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm print:break-inside-avoid"
+                <Card className="print:break-inside-avoid"
                   style={{ marginBottom: index < otherItems.length - 1 ? `${otherItemsSpacing[item.id] || 16}px` : '0' }}
                 >
-                  <div className="flex items-center gap-2 mb-2 pb-2 border-b">
-                    <h3 className="text-base font-semibold text-gray-900">
-                      {item.category}
-                    </h3>
-                    {item.date && (
-                      <span className="text-xs px-2 py-0.5 rounded border border-gray-800 text-gray-800 bg-white font-semibold">
-                        {item.date}
-                      </span>
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-2 mb-2 pb-2 border-b">
+                      <h3 className="text-base font-semibold text-gray-900">
+                        {item.category}
+                      </h3>
+                      {item.date && (
+                        <Badge variant="outline">
+                          {item.date}
+                        </Badge>
+                      )}
+                    </div>
+                    <h4 className="text-sm font-semibold text-gray-900 mb-1">{item.title}</h4>
+                    {item.organization && (
+                      <p className="text-xs text-gray-600 mb-2">{item.organization}</p>
                     )}
-                  </div>
-                  <h4 className="text-sm font-semibold text-gray-900 mb-1">{item.title}</h4>
-                  {item.organization && (
-                    <p className="text-xs text-gray-600 mb-2">{item.organization}</p>
-                  )}
-                  {item.description && (
-                    <p className="text-xs text-gray-700 leading-relaxed whitespace-pre-wrap">{item.description}</p>
-                  )}
-                </div>
+                    {item.description && (
+                      <p className="text-xs text-gray-700 leading-relaxed whitespace-pre-wrap">{item.description}</p>
+                    )}
+                  </CardContent>
+                </Card>
                 {/* 내부 아이템 간격 조절 핸들 */}
                 {!isPreview && index < otherItems.length - 1 && (
                   <SpacingHandle
@@ -616,10 +627,12 @@ export default function ResumePage() {
 
       {selectedSections.skills && techStats && techStats.length > 0 && (
         <>
-          <div className="p-4 bg-white border rounded-lg shadow-sm print:break-inside-avoid" style={{ marginBottom: `${sectionSpacing.skills}px` }}>
-            <h2 className="text-base font-semibold text-gray-900 mb-3 pb-2 border-b">보유 기술</h2>
-            <TechStackTreemap data={techStats} height={300} showLegend={true} />
-          </div>
+          <Card className="print:break-inside-avoid" style={{ marginBottom: `${sectionSpacing.skills}px` }}>
+            <CardContent className="p-4">
+              <h2 className="text-base font-semibold text-gray-900 mb-3 pb-2 border-b">보유 기술</h2>
+              <TechStackTreemap data={techStats} height={300} showLegend={true} />
+            </CardContent>
+          </Card>
           {!isPreview && (
             <SpacingHandle
               value={sectionSpacing.skills}
@@ -636,18 +649,17 @@ export default function ResumePage() {
     return (
       <div className="min-h-screen bg-gray-100 print:bg-white">
         <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-sm border-b p-4 flex justify-end gap-2 print:hidden">
-          <button
+          <Button
             onClick={() => setIsPreview(false)}
-            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 shadow text-sm"
           >
             편집 모드로 돌아가기
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => window.print()}
-            className="px-4 py-2 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/90 shadow text-sm"
+            variant="secondary"
           >
             PDF 저장
-          </button>
+          </Button>
         </div>
         <div className="py-8 flex justify-center print:p-0 relative">
           <div className="relative">
@@ -697,93 +709,72 @@ export default function ResumePage() {
         actions={
           <>
             <div className="flex items-center gap-2 text-sm border-r pr-4">
-              <button
+              <Button
                 onClick={() => toggleSection("basic")}
-                className={`px-2 py-1 rounded border transition-colors ${
-                  selectedSections.basic
-                    ? "bg-primary text-primary-foreground border-primary"
-                    : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
-                }`}
+                variant={selectedSections.basic ? "default" : "outline"}
+                size="sm"
               >
                 기본사항
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => toggleSection("career")}
-                className={`px-2 py-1 rounded border transition-colors ${
-                  selectedSections.career
-                    ? "bg-primary text-primary-foreground border-primary"
-                    : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
-                }`}
+                variant={selectedSections.career ? "default" : "outline"}
+                size="sm"
               >
                 경력
-              </button>
-              <button
-                  onClick={() => toggleSection("education")}
-                  className={`px-2 py-1 rounded border transition-colors ${
-                      selectedSections.education
-                          ? "bg-primary text-primary-foreground border-primary"
-                          : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
-                  }`}
+              </Button>
+              <Button
+                onClick={() => toggleSection("education")}
+                variant={selectedSections.education ? "default" : "outline"}
+                size="sm"
               >
                 학력
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => toggleSection("skills")}
-                className={`px-2 py-1 rounded border transition-colors ${
-                  selectedSections.skills
-                    ? "bg-primary text-primary-foreground border-primary"
-                    : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
-                }`}
+                variant={selectedSections.skills ? "default" : "outline"}
+                size="sm"
               >
                 보유기술
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => toggleSection("otherItems")}
-                className={`px-2 py-1 rounded border transition-colors ${
-                  selectedSections.otherItems
-                    ? "bg-primary text-primary-foreground border-primary"
-                    : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
-                }`}
+                variant={selectedSections.otherItems ? "default" : "outline"}
+                size="sm"
               >
                 기타사항
-              </button>
+              </Button>
             </div>
             <div className="flex items-center gap-2 text-sm border-r pr-4">
               <span className="text-gray-700 font-medium">정렬:</span>
-              <button
+              <Button
                 onClick={() => setSortOrder("latest")}
-                className={`px-2 py-1 rounded border transition-colors ${
-                  sortOrder === "latest"
-                    ? "bg-primary text-primary-foreground border-primary"
-                    : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
-                }`}
+                variant={sortOrder === "latest" ? "default" : "outline"}
+                size="sm"
               >
                 최신순
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => setSortOrder("oldest")}
-                className={`px-2 py-1 rounded border transition-colors ${
-                  sortOrder === "oldest"
-                    ? "bg-primary text-primary-foreground border-primary"
-                    : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
-                }`}
+                variant={sortOrder === "oldest" ? "default" : "outline"}
+                size="sm"
               >
                 과거순
-              </button>
+              </Button>
             </div>
-            <button
+            <Button
               onClick={resetSpacing}
-              className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm border border-gray-300"
+              variant="outline"
+              size="sm"
               title="간격 설정 초기화"
             >
               간격 초기화
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => setIsPreview(true)}
-              className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
             >
               미리보기
-            </button>
+            </Button>
           </>
         }
       />

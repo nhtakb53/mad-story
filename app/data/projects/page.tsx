@@ -4,6 +4,12 @@ import { getProjects, createProject, updateProject, deleteProject } from "@/lib/
 import { useSupabaseData } from "@/hooks/useSupabaseData";
 import { useState } from "react";
 import { TopHeader } from "@/components/top-header";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { MonthPicker } from "@/components/ui/month-picker";
 
 interface Project {
   id: string;
@@ -54,20 +60,22 @@ function SortableProjectItem({ project, onEdit, onDelete }: { project: Project; 
   };
 
   return (
-    <div
+    <Card
       ref={setNodeRef}
       style={style}
-      className="border p-6 rounded-lg bg-white"
     >
-      <div className="flex justify-between items-start mb-4">
-        <div className="flex items-start gap-3 flex-1">
-          <button
-            {...attributes}
-            {...listeners}
-            className="mt-1 cursor-grab active:cursor-grabbing p-2 hover:bg-gray-100 rounded text-gray-400 hover:text-gray-600"
-          >
-            <GripVertical size={20} />
-          </button>
+      <CardContent className="p-6">
+        <div className="flex justify-between items-start mb-4">
+          <div className="flex items-start gap-3 flex-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              {...attributes}
+              {...listeners}
+              className="mt-1 cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600"
+            >
+              <GripVertical size={20} />
+            </Button>
           <div className="flex-1">
             <h3 className="text-xl font-bold">{project.name}</h3>
             <p className="text-muted-foreground">{project.role}</p>
@@ -80,9 +88,9 @@ function SortableProjectItem({ project, onEdit, onDelete }: { project: Project; 
                 <h4 className="font-semibold mb-2">기술스택:</h4>
                 <div className="flex flex-wrap gap-2">
                   {project.tech_stack.map((tech) => (
-                    <span key={tech} className="px-2 py-1 bg-gray-100 rounded text-sm">
+                    <Badge key={tech} variant="secondary">
                       {tech}
-                    </span>
+                    </Badge>
                   ))}
                 </div>
               </div>
@@ -107,21 +115,24 @@ function SortableProjectItem({ project, onEdit, onDelete }: { project: Project; 
           </div>
         </div>
         <div className="flex gap-2">
-          <button
+          <Button
+            variant="secondary"
+            size="sm"
             onClick={() => onEdit(project)}
-            className="px-3 py-1 text-sm bg-secondary text-secondary-foreground rounded hover:bg-secondary/90"
           >
             수정
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="destructive"
+            size="sm"
             onClick={() => onDelete(project.id)}
-            className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
           >
             삭제
-          </button>
+          </Button>
         </div>
       </div>
-    </div>
+    </CardContent>
+    </Card>
   );
 }
 
@@ -292,12 +303,9 @@ export default function ProjectsPage() {
       <TopHeader
         title="프로젝트"
         actions={
-          <button
-            onClick={() => setIsEditing(!isEditing)}
-            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
-          >
+          <Button onClick={() => setIsEditing(!isEditing)}>
             {isEditing ? "목록으로" : "프로젝트 추가"}
-          </button>
+          </Button>
         }
       />
       <div className="pt-[65px] pl-64 print:pt-0 print:pl-0">
@@ -305,131 +313,121 @@ export default function ProjectsPage() {
           <div className="w-full max-w-2xl">
 
         {isEditing ? (
-          <form onSubmit={handleSubmit} className="space-y-6 border p-6 rounded-lg">
+          <Card>
+            <CardContent className="pt-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             {saving && <div className="text-sm text-gray-600">저장 중...</div>}
             <div>
               <label className="block text-sm font-medium mb-2">프로젝트명 *</label>
-              <input
+              <Input
                 type="text"
                 required
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">로고 URL</label>
-              <input
+              <Input
                 type="url"
                 value={formData.logo_url || ""}
                 onChange={(e) => setFormData({ ...formData, logo_url: e.target.value })}
                 placeholder="https://"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
               />
               <p className="text-xs text-gray-500 mt-1">프로젝트 로고 이미지 URL을 입력하세요</p>
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">로고 표시 방식</label>
               <div className="flex gap-2">
-                <button
+                <Button
                   type="button"
+                  variant={formData.logo_fit === "contain" ? "default" : "outline"}
                   onClick={() => setFormData({ ...formData, logo_fit: "contain" })}
-                  className={`px-4 py-2 rounded border transition-colors ${
-                    formData.logo_fit === "contain"
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
-                  }`}
                 >
                   전체 보기
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
+                  variant={formData.logo_fit === "cover" ? "default" : "outline"}
                   onClick={() => setFormData({ ...formData, logo_fit: "cover" })}
-                  className={`px-4 py-2 rounded border transition-colors ${
-                    formData.logo_fit === "cover"
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
-                  }`}
                 >
                   영역 채우기
-                </button>
+                </Button>
               </div>
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">프로젝트 설명 *</label>
-              <textarea
+              <Textarea
                 required
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 rows={3}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">시작일 *</label>
-              <input
-                type="month"
-                required
+              <MonthPicker
                 value={formData.start_date}
-                onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                onChange={(value) => setFormData({ ...formData, start_date: value })}
+                placeholder="시작일 선택"
+                required
               />
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">종료일 *</label>
-              <input
-                type="month"
-                required
+              <MonthPicker
                 value={formData.end_date}
-                onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                onChange={(value) => setFormData({ ...formData, end_date: value })}
+                placeholder="종료일 선택"
+                required
               />
             </div>
           <div>
             <label className="block text-sm font-medium mb-2">역할 *</label>
-            <input
+            <Input
               type="text"
               required
               value={formData.role}
               onChange={(e) => setFormData({ ...formData, role: e.target.value })}
               placeholder="예: Frontend Developer, Full Stack Developer"
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
           <div>
             <label className="block text-sm font-medium mb-2">기술 스택</label>
             <div className="flex gap-2 mb-2">
-              <input
+              <Input
                 type="text"
                 value={techInput}
                 onChange={(e) => setTechInput(e.target.value)}
                 onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addTech())}
                 placeholder="기술을 입력하고 추가 버튼을 누르세요"
-                className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
               />
-              <button
+              <Button
                 type="button"
+                variant="secondary"
                 onClick={addTech}
-                className="px-4 py-2 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/90"
               >
                 추가
-              </button>
+              </Button>
             </div>
             <div className="flex flex-wrap gap-2">
               {(formData.tech_stack || []).map((tech) => (
-                <span
+                <Badge
                   key={tech}
-                  className="inline-flex items-center gap-1 bg-primary/10 px-3 py-1 rounded-full text-sm"
+                  variant="secondary"
+                  className="inline-flex items-center gap-1 pr-1"
                 >
                   {tech}
-                  <button
+                  <Button
                     type="button"
+                    variant="ghost"
+                    size="sm"
                     onClick={() => removeTech(tech)}
-                    className="text-red-500 hover:text-red-700 ml-1"
+                    className="h-4 w-4 p-0 text-red-500 hover:text-red-700 hover:bg-transparent"
                   >
                     ×
-                  </button>
-                </span>
+                  </Button>
+                </Badge>
               ))}
             </div>
           </div>
@@ -437,21 +435,21 @@ export default function ProjectsPage() {
             <label className="block text-sm font-medium mb-2">주요 성과</label>
             <p className="text-xs text-gray-500 mb-2">들여쓰기: 스페이스 2개로 1단계, 4개로 2단계 들여쓰기 가능</p>
             <div className="flex gap-2 mb-2">
-              <input
+              <Input
                 type="text"
                 value={achievementInput}
                 onChange={(e) => setAchievementInput(e.target.value)}
                 onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addAchievement())}
                 placeholder="성과를 입력하고 추가 버튼을 누르세요"
-                className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary font-mono"
+                className="font-mono"
               />
-              <button
+              <Button
                 type="button"
+                variant="secondary"
                 onClick={addAchievement}
-                className="px-4 py-2 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/90"
               >
                 추가
-              </button>
+              </Button>
             </div>
             <ul className="space-y-2">
               {(formData.achievements || []).map((achievement, index) => {
@@ -460,13 +458,15 @@ export default function ProjectsPage() {
                 return (
                   <li key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded" style={{ paddingLeft: `${level * 1.5 + 0.5}rem` }}>
                     <span className="font-mono">{achievement}</span>
-                    <button
+                    <Button
                       type="button"
+                      variant="ghost"
+                      size="sm"
                       onClick={() => removeAchievement(index)}
-                      className="text-red-500 hover:text-red-700"
+                      className="text-red-500 hover:text-red-700 h-auto py-1"
                     >
                       삭제
-                    </button>
+                    </Button>
                   </li>
                 );
               })}
@@ -474,32 +474,30 @@ export default function ProjectsPage() {
           </div>
           <div>
             <label className="block text-sm font-medium mb-2">프로젝트 URL</label>
-            <input
+            <Input
               type="url"
               value={formData.url || ""}
               onChange={(e) => setFormData({ ...formData, url: e.target.value })}
               placeholder="https://"
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
           <div className="flex gap-2">
-            <button
-              type="submit"
-              className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
-            >
+            <Button type="submit">
               {editingId ? "수정" : "저장"}
-            </button>
+            </Button>
             {editingId && (
-              <button
+              <Button
                 type="button"
+                variant="secondary"
                 onClick={resetForm}
-                className="px-6 py-2 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/90"
               >
                 취소
-              </button>
+              </Button>
             )}
           </div>
         </form>
+            </CardContent>
+          </Card>
         ) : (
           <div className="space-y-4">
             {!projects || projects.length === 0 ? (

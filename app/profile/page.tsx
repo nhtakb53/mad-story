@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { User, Briefcase, Award, GraduationCap, FolderKanban, FileQuestion, Settings } from "lucide-react";
 import { TopHeader } from "@/components/top-header";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function ProfilePage() {
   return (
@@ -13,128 +14,136 @@ export default function ProfilePage() {
           <div className="p-6 max-w-7xl">
             {/* 정보 관리 카드 */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <Link
-              href="/data/basic"
-              className="group bg-white dark:bg-gray-900 rounded-lg p-4 shadow border border-gray-200 dark:border-gray-800 hover:border-blue-500 hover:shadow-md transition-all"
-            >
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <User className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                </div>
-                <div>
-                  <h3 className="text-base font-bold">기본사항</h3>
-                  <p className="text-xs text-muted-foreground">개인정보 관리</p>
-                </div>
-              </div>
-              <p className="text-xs text-muted-foreground">
-                이름, 연락처, GitHub, 블로그, 자기소개 등을 입력하세요
-              </p>
+            <Link href="/data/basic">
+              <Card className="group hover:border-blue-500 hover:shadow-md transition-all cursor-pointer">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <User className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-base font-bold">기본사항</h3>
+                      <p className="text-xs text-muted-foreground">개인정보 관리</p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    이름, 연락처, GitHub, 블로그, 자기소개 등을 입력하세요
+                  </p>
+                </CardContent>
+              </Card>
             </Link>
 
-            <Link
-              href="/data/career"
-              className="group bg-white dark:bg-gray-900 rounded-lg p-4 shadow border border-gray-200 dark:border-gray-800 hover:border-purple-500 hover:shadow-md transition-all"
-            >
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Briefcase className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                </div>
-                <div>
-                  <h3 className="text-base font-bold">경력</h3>
-                  <p className="text-xs text-muted-foreground">회사 및 직무 관리</p>
-                </div>
-              </div>
-              <p className="text-xs text-muted-foreground">
-                회사명, 직책, 재직기간, 업무 내용 및 주요 성과를 입력하세요
-              </p>
+            <Link href="/data/career">
+              <Card className="group hover:border-purple-500 hover:shadow-md transition-all cursor-pointer">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <Briefcase className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-base font-bold">경력</h3>
+                      <p className="text-xs text-muted-foreground">회사 및 직무 관리</p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    회사명, 직책, 재직기간, 업무 내용 및 주요 성과를 입력하세요
+                  </p>
+                </CardContent>
+              </Card>
             </Link>
 
-            <Link
-              href="/data/skills"
-              className="group bg-white dark:bg-gray-900 rounded-lg p-4 shadow border border-gray-200 dark:border-gray-800 hover:border-green-500 hover:shadow-md transition-all"
-            >
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Award className="w-5 h-5 text-green-600 dark:text-green-400" />
-                </div>
-                <div>
-                  <h3 className="text-base font-bold">보유기술</h3>
-                  <p className="text-xs text-muted-foreground">기술 스택 관리</p>
-                </div>
-              </div>
-              <p className="text-xs text-muted-foreground">
-                카테고리별 기술 스택 및 숙련도를 입력하세요
-              </p>
+            <Link href="/data/skills">
+              <Card className="group hover:border-green-500 hover:shadow-md transition-all cursor-pointer">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <Award className="w-5 h-5 text-green-600 dark:text-green-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-base font-bold">보유기술</h3>
+                      <p className="text-xs text-muted-foreground">기술 스택 관리</p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    카테고리별 기술 스택 및 숙련도를 입력하세요
+                  </p>
+                </CardContent>
+              </Card>
             </Link>
 
-            <Link
-              href="/data/education"
-              className="group bg-white dark:bg-gray-900 rounded-lg p-4 shadow border border-gray-200 dark:border-gray-800 hover:border-orange-500 hover:shadow-md transition-all"
-            >
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <GraduationCap className="w-5 h-5 text-orange-600 dark:text-orange-400" />
-                </div>
-                <div>
-                  <h3 className="text-base font-bold">학력</h3>
-                  <p className="text-xs text-muted-foreground">학력 정보 관리</p>
-                </div>
-              </div>
-              <p className="text-xs text-muted-foreground">
-                학교, 전공, 학위, 학점 정보를 입력하세요
-              </p>
+            <Link href="/data/education">
+              <Card className="group hover:border-orange-500 hover:shadow-md transition-all cursor-pointer">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-10 h-10 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <GraduationCap className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-base font-bold">학력</h3>
+                      <p className="text-xs text-muted-foreground">학력 정보 관리</p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    학교, 전공, 학위, 학점 정보를 입력하세요
+                  </p>
+                </CardContent>
+              </Card>
             </Link>
 
-            <Link
-              href="/data/projects"
-              className="group bg-white dark:bg-gray-900 rounded-lg p-4 shadow border border-gray-200 dark:border-gray-800 hover:border-pink-500 hover:shadow-md transition-all"
-            >
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 bg-pink-100 dark:bg-pink-900/30 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <FolderKanban className="w-5 h-5 text-pink-600 dark:text-pink-400" />
-                </div>
-                <div>
-                  <h3 className="text-base font-bold">프로젝트</h3>
-                  <p className="text-xs text-muted-foreground">프로젝트 이력 관리</p>
-                </div>
-              </div>
-              <p className="text-xs text-muted-foreground">
-                프로젝트명, 설명, 기간, 역할, 기술 스택, 주요 성과를 입력하세요
-              </p>
+            <Link href="/data/projects">
+              <Card className="group hover:border-pink-500 hover:shadow-md transition-all cursor-pointer">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-10 h-10 bg-pink-100 dark:bg-pink-900/30 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <FolderKanban className="w-5 h-5 text-pink-600 dark:text-pink-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-base font-bold">프로젝트</h3>
+                      <p className="text-xs text-muted-foreground">프로젝트 이력 관리</p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    프로젝트명, 설명, 기간, 역할, 기술 스택, 주요 성과를 입력하세요
+                  </p>
+                </CardContent>
+              </Card>
             </Link>
 
-            <Link
-              href="/data/other-items"
-              className="group bg-white dark:bg-gray-900 rounded-lg p-4 shadow border border-gray-200 dark:border-gray-800 hover:border-teal-500 hover:shadow-md transition-all"
-            >
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 bg-teal-100 dark:bg-teal-900/30 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <FileQuestion className="w-5 h-5 text-teal-600 dark:text-teal-400" />
-                </div>
-                <div>
-                  <h3 className="text-base font-bold">기타 사항</h3>
-                  <p className="text-xs text-muted-foreground">논문, 자격증 등</p>
-                </div>
-              </div>
-              <p className="text-xs text-muted-foreground">
-                논문, 자격증, 수상 경력, 특허 등 다양한 이력을 입력하세요
-              </p>
+            <Link href="/data/other-items">
+              <Card className="group hover:border-teal-500 hover:shadow-md transition-all cursor-pointer">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-10 h-10 bg-teal-100 dark:bg-teal-900/30 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <FileQuestion className="w-5 h-5 text-teal-600 dark:text-teal-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-base font-bold">기타 사항</h3>
+                      <p className="text-xs text-muted-foreground">논문, 자격증 등</p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    논문, 자격증, 수상 경력, 특허 등 다양한 이력을 입력하세요
+                  </p>
+                </CardContent>
+              </Card>
             </Link>
 
-            <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-lg p-4 shadow border border-gray-300 dark:border-gray-700 opacity-60">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 bg-gray-300 dark:bg-gray-700 rounded-lg flex items-center justify-center">
-                  <Settings className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+            <Card className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 border-gray-300 dark:border-gray-700 opacity-60">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-10 h-10 bg-gray-300 dark:bg-gray-700 rounded-lg flex items-center justify-center">
+                    <Settings className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold">계정 설정</h3>
+                    <p className="text-xs text-muted-foreground">준비중</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-base font-bold">계정 설정</h3>
-                  <p className="text-xs text-muted-foreground">준비중</p>
-                </div>
-              </div>
-              <p className="text-xs text-muted-foreground">
-                계정 설정 기능이 곧 추가됩니다
-              </p>
-            </div>
+                <p className="text-xs text-muted-foreground">
+                  계정 설정 기능이 곧 추가됩니다
+                </p>
+              </CardContent>
+            </Card>
           </div>
 
           {/* 안내 메시지 */}

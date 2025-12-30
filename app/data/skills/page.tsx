@@ -4,6 +4,10 @@ import { getSkills, createSkill, updateSkill, deleteSkill } from "@/lib/api";
 import { useSupabaseData } from "@/hooks/useSupabaseData";
 import { useState } from "react";
 import { TopHeader } from "@/components/top-header";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 
 interface Skill {
   id: string;
@@ -95,12 +99,9 @@ export default function SkillsPage() {
       <TopHeader
         title="보유기술"
         actions={
-          <button
-            onClick={() => setIsEditing(!isEditing)}
-            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
-          >
+          <Button onClick={() => setIsEditing(!isEditing)}>
             {isEditing ? "목록으로" : "기술 추가"}
-          </button>
+          </Button>
         }
       />
       <div className="pt-[65px] pl-64 print:pt-0 print:pl-0">
@@ -108,28 +109,28 @@ export default function SkillsPage() {
           <div className="w-full max-w-2xl">
 
         {isEditing ? (
-          <form onSubmit={handleSubmit} className="space-y-6 border p-6 rounded-lg">
+          <Card>
+            <CardContent className="pt-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             {saving && <div className="text-sm text-gray-600">저장 중...</div>}
             <div>
               <label className="block text-sm font-medium mb-2">카테고리 *</label>
-              <input
+              <Input
                 type="text"
                 required
                 value={formData.category}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                 placeholder="예: 프로그래밍 언어, 프레임워크, 데이터베이스 등"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">기술명 *</label>
-              <input
+              <Input
                 type="text"
                 required
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder="예: JavaScript, React, MySQL 등"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
             <div>
@@ -151,61 +152,64 @@ export default function SkillsPage() {
               </select>
             </div>
             <div className="flex gap-2">
-              <button
-                type="submit"
-                className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
-              >
+              <Button type="submit">
                 {editingId ? "수정" : "저장"}
-              </button>
+              </Button>
               {editingId && (
-                <button
+                <Button
                   type="button"
+                  variant="secondary"
                   onClick={resetForm}
-                  className="px-6 py-2 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/90"
                 >
                   취소
-                </button>
+                </Button>
               )}
             </div>
           </form>
+            </CardContent>
+          </Card>
         ) : (
           <div className="space-y-6">
             {Object.keys(groupedSkills).length === 0 ? (
               <p className="text-muted-foreground">등록된 기술이 없습니다.</p>
             ) : (
               Object.entries(groupedSkills).map(([category, categorySkills]) => (
-                <div key={category} className="border p-6 rounded-lg">
-                  <h3 className="text-xl font-bold mb-4">{category}</h3>
-                  <div className="space-y-2">
-                    {categorySkills.map((skill) => (
-                      <div
-                        key={skill.id}
-                        className="flex items-center justify-between bg-gray-50 p-3 rounded"
-                      >
-                        <div>
-                          <span className="font-medium">{skill.name}</span>
-                          <span className="ml-3 inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-bold">
-                            {skill.level}
-                          </span>
+                <Card key={category}>
+                  <CardContent className="p-6">
+                    <h3 className="text-xl font-bold mb-4">{category}</h3>
+                    <div className="space-y-2">
+                      {categorySkills.map((skill) => (
+                        <div
+                          key={skill.id}
+                          className="flex items-center justify-between bg-gray-50 p-3 rounded"
+                        >
+                          <div>
+                            <span className="font-medium">{skill.name}</span>
+                            <Badge className="ml-3">
+                              {skill.level}
+                            </Badge>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="secondary"
+                              size="sm"
+                              onClick={() => handleEdit(skill)}
+                            >
+                              수정
+                            </Button>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => handleDelete(skill.id)}
+                            >
+                              삭제
+                            </Button>
+                          </div>
                         </div>
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => handleEdit(skill)}
-                            className="px-3 py-1 text-sm bg-secondary text-secondary-foreground rounded hover:bg-secondary/90"
-                          >
-                            수정
-                          </button>
-                          <button
-                            onClick={() => handleDelete(skill.id)}
-                            className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
-                          >
-                            삭제
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
               ))
             )}
           </div>

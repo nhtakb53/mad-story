@@ -5,6 +5,9 @@ import { ArrowRight, FileText, Briefcase, Sparkles, Mail, Phone, Github } from '
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getSession } from '@/lib/auth';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 // 예시 데이터
 const sampleData = {
@@ -78,10 +81,10 @@ export default function Home() {
       <section className="relative px-8 py-20 text-center bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-background dark:to-gray-900">
         <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
         <div className="relative max-w-5xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-4 py-2 mb-6 text-sm font-medium bg-primary/10 text-primary rounded-full">
-            <Sparkles className="w-4 h-4" />
+          <Badge variant="secondary" className="mb-6 px-4 py-2 text-sm">
+            <Sparkles className="w-4 h-4 mr-2" />
             개발자를 위한 이력 관리 솔루션
-          </div>
+          </Badge>
           <h1 className="text-6xl md:text-7xl font-bold mb-4 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-600 dark:from-white dark:via-gray-200 dark:to-gray-400 bg-clip-text text-transparent">
             Mad Story
           </h1>
@@ -93,19 +96,17 @@ export default function Home() {
             PDF로 바로 출력하세요
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/resume"
-              className="group px-8 py-4 bg-primary text-primary-foreground rounded-xl font-semibold hover:bg-primary/90 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
-            >
-              이력서 작성하기
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </Link>
-            <Link
-              href="/career"
-              className="px-8 py-4 border-2 border-gray-300 dark:border-gray-700 text-foreground rounded-xl font-semibold hover:border-primary hover:bg-primary/5 transition-all flex items-center justify-center gap-2"
-            >
-              경력기술서 작성하기
-            </Link>
+            <Button asChild size="lg" className="group rounded-xl shadow-lg hover:shadow-xl">
+              <Link href="/resume">
+                이력서 작성하기
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </Button>
+            <Button asChild variant="outline" size="lg" className="rounded-xl">
+              <Link href="/career">
+                경력기술서 작성하기
+              </Link>
+            </Button>
           </div>
         </div>
       </section>
@@ -122,11 +123,11 @@ export default function Home() {
 
           <div className="grid md:grid-cols-2 gap-8">
             {/* 이력서 예시 */}
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden border-2 border-gray-200 dark:border-gray-700 hover:scale-[1.02] transition-transform duration-300">
-              <div className="bg-gradient-to-r from-blue-500 to-purple-500 px-6 py-4">
+            <Card className="overflow-hidden hover:scale-[1.02] transition-transform duration-300 shadow-2xl">
+              <CardHeader className="bg-gradient-to-r from-blue-500 to-purple-500">
                 <h3 className="text-xl font-bold text-white">이력서 예시</h3>
-              </div>
-              <div className="p-6 space-y-3 max-h-[600px] overflow-y-auto">
+              </CardHeader>
+              <CardContent className="space-y-3 max-h-[600px] overflow-y-auto pt-6">
                 {/* 기본사항 */}
                 <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
                   <div className="mb-2">
@@ -149,12 +150,9 @@ export default function Home() {
                   </div>
                   <div className="flex flex-wrap gap-1.5">
                     {sampleData.basicInfo.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-2 py-0.5 rounded-full text-xs font-semibold"
-                      >
+                      <Badge key={tag} className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">
                         {tag}
-                      </span>
+                      </Badge>
                     ))}
                   </div>
                 </div>
@@ -163,9 +161,9 @@ export default function Home() {
                 <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-3 border border-gray-200 dark:border-gray-700">
                   <div className="flex items-center justify-between mb-2">
                     <h4 className="text-xs font-bold text-gray-900 dark:text-white">경력</h4>
-                    <span className="text-xs bg-gray-800 dark:bg-gray-600 text-white px-2 py-0.5 rounded-full">
+                    <Badge variant="secondary" className="text-xs bg-gray-800 dark:bg-gray-600 text-white">
                       최신
-                    </span>
+                    </Badge>
                   </div>
                   <div className="mb-2">
                     <h5 className="text-sm font-semibold text-gray-900 dark:text-white">{sampleData.career.company}</h5>
@@ -193,12 +191,9 @@ export default function Home() {
                         <div className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">{category}</div>
                         <div className="flex flex-wrap gap-1">
                           {categorySkills.map((skill) => (
-                            <span
-                              key={skill.name}
-                              className="bg-gray-800 dark:bg-gray-600 text-white px-2 py-0.5 rounded text-xs"
-                            >
+                            <Badge key={skill.name} variant="secondary" className="bg-gray-800 dark:bg-gray-600 text-white">
                               {skill.name}
-                            </span>
+                            </Badge>
                           ))}
                         </div>
                       </div>
@@ -220,32 +215,28 @@ export default function Home() {
                   </div>
                   <div className="flex flex-wrap gap-1">
                     {sampleData.project.tech_stack.map((tech, idx) => (
-                      <span
-                        key={idx}
-                        className="bg-gray-800 dark:bg-gray-600 text-white px-2 py-0.5 rounded text-xs"
-                      >
+                      <Badge key={idx} variant="secondary" className="bg-gray-800 dark:bg-gray-600 text-white">
                         {tech}
-                      </span>
+                      </Badge>
                     ))}
                   </div>
                 </div>
-              </div>
-              <div className="px-6 pb-6">
-                <Link
-                  href="/resume"
-                  className="block w-full text-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
-                >
-                  이력서 작성하기
-                </Link>
-              </div>
-            </div>
+              </CardContent>
+              <CardFooter>
+                <Button asChild className="w-full bg-blue-600 hover:bg-blue-700">
+                  <Link href="/resume">
+                    이력서 작성하기
+                  </Link>
+                </Button>
+              </CardFooter>
+            </Card>
 
             {/* 경력기술서 예시 */}
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden border-2 border-gray-200 dark:border-gray-700 hover:scale-[1.02] transition-transform duration-300">
-              <div className="bg-gradient-to-r from-purple-500 to-pink-500 px-6 py-4">
+            <Card className="overflow-hidden hover:scale-[1.02] transition-transform duration-300 shadow-2xl">
+              <CardHeader className="bg-gradient-to-r from-purple-500 to-pink-500">
                 <h3 className="text-xl font-bold text-white">경력기술서 예시</h3>
-              </div>
-              <div className="p-6 space-y-3 max-h-[600px] overflow-y-auto">
+              </CardHeader>
+              <CardContent className="space-y-3 max-h-[600px] overflow-y-auto pt-6">
                 {/* 헤더 */}
                 <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700 text-center">
                   <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-1">경력기술서</h3>
@@ -295,12 +286,9 @@ export default function Home() {
                     <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">사용 기술</p>
                     <div className="flex flex-wrap gap-1">
                       {sampleData.project.tech_stack.map((tech, idx) => (
-                        <span
-                          key={idx}
-                          className="bg-gray-800 dark:bg-gray-600 text-white px-2 py-0.5 rounded text-xs"
-                        >
+                        <Badge key={idx} variant="secondary" className="bg-gray-800 dark:bg-gray-600 text-white">
                           {tech}
-                        </span>
+                        </Badge>
                       ))}
                     </div>
                   </div>
@@ -325,16 +313,15 @@ export default function Home() {
                     ))}
                   </div>
                 </div>
-              </div>
-              <div className="px-6 pb-6">
-                <Link
-                  href="/career"
-                  className="block w-full text-center px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition-colors"
-                >
-                  경력기술서 작성하기
-                </Link>
-              </div>
-            </div>
+              </CardContent>
+              <CardFooter>
+                <Button asChild className="w-full bg-purple-600 hover:bg-purple-700">
+                  <Link href="/career">
+                    경력기술서 작성하기
+                  </Link>
+                </Button>
+              </CardFooter>
+            </Card>
           </div>
         </div>
       </section>
@@ -348,36 +335,42 @@ export default function Home() {
           </p>
         </div>
         <div className="grid md:grid-cols-3 gap-8">
-          <div className="group p-8 bg-white dark:bg-gray-900 rounded-2xl border-2 border-gray-200 dark:border-gray-800 hover:border-primary hover:shadow-xl transition-all">
-            <div className="w-14 h-14 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-              <FileText className="w-7 h-7 text-blue-600 dark:text-blue-400" />
-            </div>
-            <h3 className="text-2xl font-bold mb-3">간편한 데이터 관리</h3>
-            <p className="text-muted-foreground leading-relaxed">
-              기본사항, 경력, 기술스택, 학력, 프로젝트를<br />
-              직관적인 인터페이스로 쉽게 입력하고 관리하세요
-            </p>
-          </div>
-          <div className="group p-8 bg-white dark:bg-gray-900 rounded-2xl border-2 border-gray-200 dark:border-gray-800 hover:border-primary hover:shadow-xl transition-all">
-            <div className="w-14 h-14 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-              <Briefcase className="w-7 h-7 text-purple-600 dark:text-purple-400" />
-            </div>
-            <h3 className="text-2xl font-bold mb-3">맞춤형 문서 생성</h3>
-            <p className="text-muted-foreground leading-relaxed">
-              필요한 섹션만 선택하여 상황에 맞는<br />
-              이력서와 경력기술서를 자유롭게 구성하세요
-            </p>
-          </div>
-          <div className="group p-8 bg-white dark:bg-gray-900 rounded-2xl border-2 border-gray-200 dark:border-gray-800 hover:border-primary hover:shadow-xl transition-all">
-            <div className="w-14 h-14 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-              <Sparkles className="w-7 h-7 text-green-600 dark:text-green-400" />
-            </div>
-            <h3 className="text-2xl font-bold mb-3">즉시 PDF 출력</h3>
-            <p className="text-muted-foreground leading-relaxed">
-              A4 형식으로 미리보기하고<br />
-              버튼 클릭 한 번으로 PDF 다운로드
-            </p>
-          </div>
+          <Card className="group hover:border-primary hover:shadow-xl transition-all">
+            <CardContent className="p-8">
+              <div className="w-14 h-14 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <FileText className="w-7 h-7 text-blue-600 dark:text-blue-400" />
+              </div>
+              <h3 className="text-2xl font-bold mb-3">간편한 데이터 관리</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                기본사항, 경력, 기술스택, 학력, 프로젝트를<br />
+                직관적인 인터페이스로 쉽게 입력하고 관리하세요
+              </p>
+            </CardContent>
+          </Card>
+          <Card className="group hover:border-primary hover:shadow-xl transition-all">
+            <CardContent className="p-8">
+              <div className="w-14 h-14 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <Briefcase className="w-7 h-7 text-purple-600 dark:text-purple-400" />
+              </div>
+              <h3 className="text-2xl font-bold mb-3">맞춤형 문서 생성</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                필요한 섹션만 선택하여 상황에 맞는<br />
+                이력서와 경력기술서를 자유롭게 구성하세요
+              </p>
+            </CardContent>
+          </Card>
+          <Card className="group hover:border-primary hover:shadow-xl transition-all">
+            <CardContent className="p-8">
+              <div className="w-14 h-14 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <Sparkles className="w-7 h-7 text-green-600 dark:text-green-400" />
+              </div>
+              <h3 className="text-2xl font-bold mb-3">즉시 PDF 출력</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                A4 형식으로 미리보기하고<br />
+                버튼 클릭 한 번으로 PDF 다운로드
+              </p>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
@@ -392,37 +385,43 @@ export default function Home() {
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="relative">
-              <div className="absolute -top-4 -left-4 w-12 h-12 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold text-xl shadow-lg">
+              <Badge className="absolute -top-4 -left-4 w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl shadow-lg">
                 1
-              </div>
-              <div className="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-lg h-full pt-12">
-                <h3 className="text-xl font-bold mb-3">데이터 입력</h3>
-                <p className="text-muted-foreground">
-                  좌측 메뉴에서 기본정보, 경력, 기술스택, 학력, 프로젝트 정보를 단계별로 입력하세요
-                </p>
-              </div>
+              </Badge>
+              <Card className="h-full pt-12 shadow-lg">
+                <CardContent className="p-8">
+                  <h3 className="text-xl font-bold mb-3">데이터 입력</h3>
+                  <p className="text-muted-foreground">
+                    좌측 메뉴에서 기본정보, 경력, 기술스택, 학력, 프로젝트 정보를 단계별로 입력하세요
+                  </p>
+                </CardContent>
+              </Card>
             </div>
             <div className="relative">
-              <div className="absolute -top-4 -left-4 w-12 h-12 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold text-xl shadow-lg">
+              <Badge className="absolute -top-4 -left-4 w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl shadow-lg">
                 2
-              </div>
-              <div className="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-lg h-full pt-12">
-                <h3 className="text-xl font-bold mb-3">섹션 선택</h3>
-                <p className="text-muted-foreground">
-                  이력서나 경력기술서 페이지에서 포함할 섹션을 토글로 간편하게 선택하세요
-                </p>
-              </div>
+              </Badge>
+              <Card className="h-full pt-12 shadow-lg">
+                <CardContent className="p-8">
+                  <h3 className="text-xl font-bold mb-3">섹션 선택</h3>
+                  <p className="text-muted-foreground">
+                    이력서나 경력기술서 페이지에서 포함할 섹션을 토글로 간편하게 선택하세요
+                  </p>
+                </CardContent>
+              </Card>
             </div>
             <div className="relative">
-              <div className="absolute -top-4 -left-4 w-12 h-12 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold text-xl shadow-lg">
+              <Badge className="absolute -top-4 -left-4 w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl shadow-lg">
                 3
-              </div>
-              <div className="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-lg h-full pt-12">
-                <h3 className="text-xl font-bold mb-3">PDF 저장</h3>
-                <p className="text-muted-foreground">
-                  미리보기로 최종 확인 후 PDF로 저장하여 어디서든 활용하세요
-                </p>
-              </div>
+              </Badge>
+              <Card className="h-full pt-12 shadow-lg">
+                <CardContent className="p-8">
+                  <h3 className="text-xl font-bold mb-3">PDF 저장</h3>
+                  <p className="text-muted-foreground">
+                    미리보기로 최종 확인 후 PDF로 저장하여 어디서든 활용하세요
+                  </p>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </div>
@@ -437,13 +436,12 @@ export default function Home() {
           <p className="text-xl text-muted-foreground mb-12">
             몇 분이면 완성되는 전문적인 이력서
           </p>
-          <Link
-            href="/data/basic"
-            className="group inline-flex items-center gap-2 px-10 py-5 bg-primary text-primary-foreground rounded-xl font-bold text-lg hover:bg-primary/90 transition-all shadow-xl hover:shadow-2xl"
-          >
-            무료로 시작하기
-            <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
-          </Link>
+          <Button asChild size="lg" className="group px-10 py-6 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl">
+            <Link href="/data/basic">
+              무료로 시작하기
+              <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </Button>
         </div>
       </section>
     </div>

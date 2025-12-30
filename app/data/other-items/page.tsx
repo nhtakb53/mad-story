@@ -4,6 +4,12 @@ import { getOtherItems, createOtherItem, updateOtherItem, deleteOtherItem } from
 import { useSupabaseData } from "@/hooks/useSupabaseData";
 import { useState } from "react";
 import { TopHeader } from "@/components/top-header";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { MonthPicker } from "@/components/ui/month-picker";
 
 interface OtherItem {
   id: string;
@@ -64,54 +70,57 @@ function SortableOtherItem({ item, onEdit, onDelete }: { item: OtherItem; onEdit
   };
 
   return (
-    <div
+    <Card
       ref={setNodeRef}
       style={style}
-      className="border p-6 rounded-lg bg-white"
     >
-      <div className="flex justify-between items-start">
-        <div className="flex items-start gap-3 flex-1">
-          <button
-            {...attributes}
-            {...listeners}
-            className="mt-1 cursor-grab active:cursor-grabbing p-2 hover:bg-gray-100 rounded text-gray-400 hover:text-gray-600"
-          >
-            <GripVertical size={20} />
-          </button>
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="px-2 py-1 bg-primary/10 text-primary text-xs rounded font-medium">
-                {item.category}
-              </span>
+      <CardContent className="p-6">
+        <div className="flex justify-between items-start">
+          <div className="flex items-start gap-3 flex-1">
+            <button
+              {...attributes}
+              {...listeners}
+              className="mt-1 cursor-grab active:cursor-grabbing p-2 hover:bg-gray-100 rounded text-gray-400 hover:text-gray-600"
+            >
+              <GripVertical size={20} />
+            </button>
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-1">
+                <Badge variant="secondary">
+                  {item.category}
+                </Badge>
+              </div>
+              <h3 className="text-xl font-bold mb-1">{item.title}</h3>
+              {item.organization && (
+                <p className="text-muted-foreground text-sm mb-1">{item.organization}</p>
+              )}
+              {item.date && (
+                <p className="text-sm text-muted-foreground mb-2">{item.date}</p>
+              )}
+              {item.description && (
+                <p className="mt-2 text-sm whitespace-pre-wrap">{item.description}</p>
+              )}
             </div>
-            <h3 className="text-xl font-bold mb-1">{item.title}</h3>
-            {item.organization && (
-              <p className="text-muted-foreground text-sm mb-1">{item.organization}</p>
-            )}
-            {item.date && (
-              <p className="text-sm text-muted-foreground mb-2">{item.date}</p>
-            )}
-            {item.description && (
-              <p className="mt-2 text-sm whitespace-pre-wrap">{item.description}</p>
-            )}
+          </div>
+          <div className="flex gap-2">
+            <Button
+              onClick={() => onEdit(item)}
+              variant="secondary"
+              size="sm"
+            >
+              수정
+            </Button>
+            <Button
+              onClick={() => onDelete(item.id)}
+              variant="destructive"
+              size="sm"
+            >
+              삭제
+            </Button>
           </div>
         </div>
-        <div className="flex gap-2">
-          <button
-            onClick={() => onEdit(item)}
-            className="px-3 py-1 text-sm bg-secondary text-secondary-foreground rounded hover:bg-secondary/90"
-          >
-            수정
-          </button>
-          <button
-            onClick={() => onDelete(item.id)}
-            className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
-          >
-            삭제
-          </button>
-        </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -228,12 +237,11 @@ export default function OtherItemsPage() {
       <TopHeader
         title="기타 사항"
         actions={
-          <button
+          <Button
             onClick={() => setIsEditing(!isEditing)}
-            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
           >
             {isEditing ? "목록으로" : "항목 추가"}
-          </button>
+          </Button>
         }
       />
       <div className="pt-[65px] pl-64 print:pt-0 print:pl-0">
@@ -241,18 +249,20 @@ export default function OtherItemsPage() {
           <div className="w-full max-w-2xl">
 
         {isEditing ? (
-          <form onSubmit={handleSubmit} className="space-y-6 border p-6 rounded-lg">
-            {saving && <div className="text-sm text-gray-600">저장 중...</div>}
+          <Card>
+            <CardContent className="p-6">
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {saving && <div className="text-sm text-gray-600">저장 중...</div>}
             <div>
               <label className="block text-sm font-medium mb-2">카테고리/타입 *</label>
-              <input
+              <Input
                 type="text"
                 list="category-suggestions"
                 required
                 value={formData.category}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                 placeholder="예: 논문, 자격증, 수상 등"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full"
               />
               <datalist id="category-suggestions">
                 {COMMON_CATEGORIES.map((cat) => (
@@ -265,62 +275,61 @@ export default function OtherItemsPage() {
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">제목 *</label>
-              <input
+              <Input
                 type="text"
                 required
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 placeholder="예: 논문명, 자격증명, 수상명 등"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full"
               />
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">발행/주최 기관</label>
-              <input
+              <Input
                 type="text"
                 value={formData.organization || ""}
                 onChange={(e) => setFormData({ ...formData, organization: e.target.value })}
                 placeholder="예: 한국정보처리학회, 과학기술정보통신부 등"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full"
               />
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">취득/발표일</label>
-              <input
-                type="month"
+              <MonthPicker
                 value={formData.date || ""}
-                onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                onChange={(value) => setFormData({ ...formData, date: value })}
               />
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">설명/상세 내용</label>
-              <textarea
+              <Textarea
                 value={formData.description || ""}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 placeholder="추가 설명이나 성과를 입력하세요"
                 rows={4}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary resize-y"
+                className="w-full resize-y"
               />
             </div>
           <div className="flex gap-2">
-            <button
+            <Button
               type="submit"
-              className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
             >
               {editingId ? "수정" : "저장"}
-            </button>
+            </Button>
             {editingId && (
-              <button
+              <Button
                 type="button"
                 onClick={resetForm}
-                className="px-6 py-2 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/90"
+                variant="secondary"
               >
                 취소
-              </button>
+              </Button>
             )}
           </div>
-        </form>
+              </form>
+            </CardContent>
+          </Card>
         ) : (
           <div className="space-y-4">
             {!otherItems || otherItems.length === 0 ? (

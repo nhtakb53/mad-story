@@ -4,6 +4,10 @@ import { getEducations, createEducation, updateEducation, deleteEducation } from
 import { useSupabaseData } from "@/hooks/useSupabaseData";
 import { useState } from "react";
 import { TopHeader } from "@/components/top-header";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { MonthPicker } from "@/components/ui/month-picker";
 
 interface Education {
   id: string;
@@ -52,20 +56,22 @@ function SortableEducationItem({ education, onEdit, onDelete }: { education: Edu
   };
 
   return (
-    <div
+    <Card
       ref={setNodeRef}
       style={style}
-      className="border p-6 rounded-lg bg-white"
     >
+      <CardContent className="p-6">
       <div className="flex justify-between items-start">
         <div className="flex items-start gap-3 flex-1">
-          <button
+          <Button
+            variant="ghost"
+            size="icon"
             {...attributes}
             {...listeners}
-            className="mt-1 cursor-grab active:cursor-grabbing p-2 hover:bg-gray-100 rounded text-gray-400 hover:text-gray-600"
+            className="mt-1 cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600"
           >
             <GripVertical size={20} />
-          </button>
+          </Button>
           <div className="flex-1">
             <h3 className="text-xl font-bold">{education.school}</h3>
             <p className="text-muted-foreground">
@@ -80,21 +86,24 @@ function SortableEducationItem({ education, onEdit, onDelete }: { education: Edu
           </div>
         </div>
         <div className="flex gap-2">
-          <button
+          <Button
+            variant="secondary"
+            size="sm"
             onClick={() => onEdit(education)}
-            className="px-3 py-1 text-sm bg-secondary text-secondary-foreground rounded hover:bg-secondary/90"
           >
             수정
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="destructive"
+            size="sm"
             onClick={() => onDelete(education.id)}
-            className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
           >
             삭제
-          </button>
+          </Button>
         </div>
       </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -215,12 +224,9 @@ export default function EducationPage() {
       <TopHeader
         title="학력"
         actions={
-          <button
-            onClick={() => setIsEditing(!isEditing)}
-            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
-          >
+          <Button onClick={() => setIsEditing(!isEditing)}>
             {isEditing ? "목록으로" : "학력 추가"}
-          </button>
+          </Button>
         }
       />
       <div className="pt-[65px] pl-64 print:pt-0 print:pl-0">
@@ -228,125 +234,111 @@ export default function EducationPage() {
           <div className="w-full max-w-2xl">
 
         {isEditing ? (
-          <form onSubmit={handleSubmit} className="space-y-6 border p-6 rounded-lg">
+          <Card>
+            <CardContent className="pt-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             {saving && <div className="text-sm text-gray-600">저장 중...</div>}
             <div>
               <label className="block text-sm font-medium mb-2">학교명 *</label>
-              <input
+              <Input
                 type="text"
                 required
                 value={formData.school}
                 onChange={(e) => setFormData({ ...formData, school: e.target.value })}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">로고 URL</label>
-              <input
+              <Input
                 type="url"
                 value={formData.logo_url || ""}
                 onChange={(e) => setFormData({ ...formData, logo_url: e.target.value })}
                 placeholder="https://"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
               />
               <p className="text-xs text-gray-500 mt-1">학교 로고 이미지 URL을 입력하세요</p>
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">로고 표시 방식</label>
               <div className="flex gap-2">
-                <button
+                <Button
                   type="button"
+                  variant={formData.logo_fit === "contain" ? "default" : "outline"}
                   onClick={() => setFormData({ ...formData, logo_fit: "contain" })}
-                  className={`px-4 py-2 rounded border transition-colors ${
-                    formData.logo_fit === "contain"
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
-                  }`}
                 >
                   전체 보기
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
+                  variant={formData.logo_fit === "cover" ? "default" : "outline"}
                   onClick={() => setFormData({ ...formData, logo_fit: "cover" })}
-                  className={`px-4 py-2 rounded border transition-colors ${
-                    formData.logo_fit === "cover"
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "bg-white text-muted-foreground border-gray-300 hover:border-gray-400"
-                  }`}
                 >
                   영역 채우기
-                </button>
+                </Button>
               </div>
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">전공 *</label>
-              <input
+              <Input
                 type="text"
                 required
                 value={formData.major}
                 onChange={(e) => setFormData({ ...formData, major: e.target.value })}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">학위 *</label>
-              <input
+              <Input
                 type="text"
                 required
                 value={formData.degree}
                 onChange={(e) => setFormData({ ...formData, degree: e.target.value })}
                 placeholder="예: 학사, 석사, 박사"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">입학일 *</label>
-              <input
-                type="month"
-                required
+              <MonthPicker
                 value={formData.start_date}
-                onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                onChange={(value) => setFormData({ ...formData, start_date: value })}
+                placeholder="입학일 선택"
+                required
               />
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">졸업일 *</label>
-              <input
-                type="month"
-                required
+              <MonthPicker
                 value={formData.end_date}
-                onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                onChange={(value) => setFormData({ ...formData, end_date: value })}
+                placeholder="졸업일 선택"
+                required
               />
             </div>
           <div>
             <label className="block text-sm font-medium mb-2">학점</label>
-            <input
+            <Input
               type="text"
               value={formData.gpa || ""}
               onChange={(e) => setFormData({ ...formData, gpa: e.target.value })}
               placeholder="예: 4.0/4.5"
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
           <div className="flex gap-2">
-            <button
-              type="submit"
-              className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
-            >
+            <Button type="submit">
               {editingId ? "수정" : "저장"}
-            </button>
+            </Button>
             {editingId && (
-              <button
+              <Button
                 type="button"
+                variant="secondary"
                 onClick={resetForm}
-                className="px-6 py-2 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/90"
               >
                 취소
-              </button>
+              </Button>
             )}
           </div>
         </form>
+            </CardContent>
+          </Card>
         ) : (
           <div className="space-y-4">
             {!educations || educations.length === 0 ? (
