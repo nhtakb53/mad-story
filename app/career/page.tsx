@@ -18,6 +18,8 @@ interface BasicInfo {
   email?: string;
   phone?: string;
   tags?: string[];
+  profile_image?: string;
+  introduce?: string;
 }
 
 interface Career {
@@ -69,7 +71,7 @@ export default function CareerStatementPage() {
 
   const [selectedSections, setSelectedSections] = useState({
     basic: true,
-    career: true,
+    career: false,
     skills: true,
     education: false,
     projects: true,
@@ -113,41 +115,60 @@ export default function CareerStatementPage() {
   const CareerContent = () => (
     <div className="a4-page bg-white">
       {selectedSections.basic && basicInfo && (
-        <Card className="mb-4 text-center">
-          <CardHeader>
-            <CardTitle className="text-lg tracking-tight">경력기술서</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <h2 className="text-base font-semibold text-gray-900 mb-1">{basicInfo.name || "이름 없음"}</h2>
-            {(basicInfo.nameEn || basicInfo.nickname) && (
-              <p className="text-xs text-gray-600 mb-2">
-                {[basicInfo.nameEn, basicInfo.nickname].filter(Boolean).join(" / ")}
-              </p>
-            )}
-            <div className="text-xs text-gray-600 space-y-1">
-              {basicInfo.email && (
-                <div className="flex items-center justify-center gap-2">
-                  <Mail size={16} className="text-gray-500" />
-                  <span>{basicInfo.email}</span>
-                </div>
+        <Card className="mb-4 print:break-inside-avoid">
+          <CardContent className="p-4">
+            <div className="flex flex-row-reverse items-start gap-4">
+              {basicInfo.profile_image && (
+                <img
+                  src={basicInfo.profile_image}
+                  alt={basicInfo.name}
+                  className="w-65 h-75 object-cover rounded-lg"
+                />
               )}
-              {basicInfo.phone && (
-                <div className="flex items-center justify-center gap-2">
-                  <Phone size={16} className="text-gray-500" />
-                  <span>{basicInfo.phone}</span>
+              <div className="flex-1">
+                <h1 className="text-3xl font-semibold text-gray-900 mb-0.5 tracking-tight mb-2">
+                  {basicInfo.name || "이름 없음"}
+                </h1>
+                {(basicInfo.nameEn || basicInfo.nickname) && (
+                  <p className="text-md text-gray-600 mb-3">
+                    {[basicInfo.nameEn, basicInfo.nickname].filter(Boolean).join(" / ")}
+                  </p>
+                )}
+                <div className="flex flex-col gap-1 text-xs text-gray-600">
+                  {basicInfo.email && (
+                    <div className="flex items-center gap-2">
+                      <Mail size={18} className="shrink-0" />
+                      <a href={`mailto:${basicInfo.email}`} className="hover:text-gray-900 transition-colors">
+                        {basicInfo.email}
+                      </a>
+                    </div>
+                  )}
+                  {basicInfo.phone && (
+                    <div className="flex items-center gap-2">
+                      <Phone size={18} className="shrink-0" />
+                      <span>{basicInfo.phone}</span>
+                    </div>
+                  )}
                 </div>
-              )}
+                {basicInfo.tags && basicInfo.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-3">
+                    {basicInfo.tags.map((tag) => (
+                      <Badge
+                        key={tag}
+                        className="bg-gradient-to-r from-blue-500 to-purple-500 text-white"
+                      >
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
-            {basicInfo.tags && basicInfo.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-3 justify-center">
-                {basicInfo.tags.map((tag) => (
-                  <Badge
-                    key={tag}
-                    className="bg-gradient-to-r from-blue-500 to-purple-500 text-white"
-                  >
-                    {tag}
-                  </Badge>
-                ))}
+            {basicInfo.introduce && (
+              <div className="mt-4 pt-4 border-t border-gray-200">
+                <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
+                  {basicInfo.introduce}
+                </p>
               </div>
             )}
           </CardContent>
@@ -204,70 +225,79 @@ export default function CareerStatementPage() {
 
       {selectedSections.projects && sortedProjects.length > 0 && (
         <Card className="mb-4">
-          <CardHeader>
-            <CardTitle className="text-base">프로젝트</CardTitle>
-          </CardHeader>
-          <CardContent>
-          <div className="space-y-3">
-            {sortedProjects.map((project) => (
-              <Card key={project.id} className="bg-gray-50">
-                <CardContent className="p-3">
-                  <div className="mb-2">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="text-sm font-semibold text-gray-900">{project.name}</h3>
-                      <Badge variant="secondary" className="bg-blue-100 text-blue-700 whitespace-nowrap">
-                        {project.startDate} ~ {project.endDate}
-                      </Badge>
-                  </div>
-                  <p className="text-xs text-gray-700 font-medium">{project.role}</p>
-                </div>
-                <div className="mb-3 pb-2 border-b border-gray-200">
-                  <p className="text-xs text-gray-700 leading-relaxed">{project.description}</p>
-                </div>
-                {project.techStack && project.techStack.length > 0 && (
-                  <div className="mb-3 pb-2 border-b border-gray-200">
-                    <h4 className="font-semibold text-xs text-gray-900 mb-2">사용 기술</h4>
-                    <div className="flex flex-wrap gap-1.5">
-                      {project.techStack.map((tech) => (
-                        <Badge
-                          key={tech}
-                          className="bg-gray-800 text-white"
-                        >
-                          {tech}
+          <CardContent className="p-4">
+            <h2 className="text-base font-semibold text-gray-900 mb-3 pb-2 border-b">프로젝트</h2>
+          <div>
+            {sortedProjects.map((project, index) => (
+              <div key={project.id}>
+                <div className="rounded-md bg-white p-3 shadow-sm border border-gray-200 print:break-inside-avoid"
+                  style={{ marginBottom: index < sortedProjects.length - 1 ? '12px' : '0' }}
+                >
+                  <div className="flex items-start gap-3 mb-3">
+                    <div className="w-12 h-12 bg-white rounded flex items-center justify-center text-gray-400 text-xs font-bold shrink-0 overflow-hidden p-1">
+                      LOGO
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <h3 className="text-sm font-semibold text-gray-900">{project.name}</h3>
+                      </div>
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <Badge variant="secondary">
+                          {project.role}
                         </Badge>
-                      ))}
+                        <Badge variant="outline">
+                          {project.startDate} ~ {project.endDate}
+                        </Badge>
+                      </div>
                     </div>
                   </div>
-                )}
-                {project.achievements && project.achievements.length > 0 && (
-                  <div className="mb-3">
-                    <h4 className="font-semibold text-xs text-gray-900 mb-2">성과 및 기여</h4>
-                    <div className="rounded-md bg-white p-2.5 border border-gray-100">
-                      <ul className="space-y-1.5">
-                        {project.achievements.map((achievement, index) => (
-                          <li key={index} className="text-xs text-gray-700 leading-relaxed flex items-start">
-                            <span className="mr-2 text-gray-900 font-bold leading-none mt-0.5">•</span>
-                            <span className="flex-1">{achievement}</span>
-                          </li>
-                        ))}
+                  <div className="border-t border-gray-200 mb-3"></div>
+                  <div className="space-y-2">
+                    <p className="text-xs text-gray-700 leading-relaxed">{project.description}</p>
+                    {project.techStack && project.techStack.length > 0 && (
+                      <div>
+                        <h4 className="font-semibold text-xs text-gray-900 mb-1.5">사용 기술</h4>
+                        <div className="flex flex-wrap gap-1.5">
+                          {project.techStack.map((tech) => (
+                            <Badge
+                              key={tech}
+                              className="bg-gray-800 text-white text-xs"
+                            >
+                              {tech}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {project.achievements && project.achievements.length > 0 && (
+                      <ul className="space-y-1.5 text-xs text-gray-700">
+                        {project.achievements.map((achievement, index) => {
+                          const indent = achievement.match(/^(\s*)/)?.[0].length || 0;
+                          const level = Math.min(Math.floor(indent / 2), 2);
+                          return (
+                            <li key={index} className="flex items-start" style={{ paddingLeft: `${level * 0.75}rem` }}>
+                              <span className="mr-2 text-gray-900 font-bold leading-none mt-0.5">•</span>
+                              <span className="flex-1">{achievement.trim()}</span>
+                            </li>
+                          );
+                        })}
                       </ul>
-                    </div>
+                    )}
+                    {project.url && (
+                      <div className="pt-2">
+                        <a
+                          href={project.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-blue-600 hover:text-blue-900 underline transition-colors"
+                        >
+                          {project.url}
+                        </a>
+                      </div>
+                    )}
                   </div>
-                )}
-                {project.url && (
-                  <div className="pt-2 border-t border-gray-200">
-                    <a
-                      href={project.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-xs text-gray-600 hover:text-gray-900 underline transition-colors"
-                    >
-                      {project.url}
-                    </a>
-                  </div>
-                )}
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             ))}
           </div>
           </CardContent>
@@ -275,26 +305,24 @@ export default function CareerStatementPage() {
       )}
 
       {selectedSections.skills && Object.keys(groupedSkills).length > 0 && (
-        <Card className="mb-4">
-          <CardHeader>
-            <CardTitle className="text-base font-bold">보유 기술</CardTitle>
-          </CardHeader>
-          <CardContent>
-          <div className="space-y-2.5">
-            {Object.entries(groupedSkills).map(([category, categorySkills]) => (
-              <div key={category}>
-                <h3 className="text-xs font-bold text-gray-900 mb-1.5">{category}</h3>
-                <div className="grid grid-cols-2 gap-1.5">
-                  {categorySkills.map((skill) => (
-                    <div key={skill.id} className="flex justify-between items-center">
-                      <span className="text-xs text-gray-700">{skill.name}</span>
-                      <span className="text-xs text-gray-600">Lv.{skill.level}</span>
-                    </div>
-                  ))}
+        <Card className="mb-4 print:break-inside-avoid">
+          <CardContent className="p-4">
+            <h2 className="text-base font-semibold text-gray-900 mb-3 pb-2 border-b">보유 기술</h2>
+            <div className="space-y-2.5">
+              {Object.entries(groupedSkills).map(([category, categorySkills]) => (
+                <div key={category}>
+                  <h3 className="text-xs font-bold text-gray-900 mb-1.5">{category}</h3>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {categorySkills.map((skill) => (
+                      <div key={skill.id} className="flex justify-between items-center">
+                        <span className="text-xs text-gray-700">{skill.name}</span>
+                        <span className="text-xs text-gray-600">Lv.{skill.level}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
       )}
@@ -375,13 +403,6 @@ export default function CareerStatementPage() {
                 기본사항
               </Button>
               <Button
-                onClick={() => toggleSection("career")}
-                variant={selectedSections.career ? "default" : "outline"}
-                size="sm"
-              >
-                경력
-              </Button>
-              <Button
                 onClick={() => toggleSection("projects")}
                 variant={selectedSections.projects ? "default" : "outline"}
                 size="sm"
@@ -394,13 +415,6 @@ export default function CareerStatementPage() {
                 size="sm"
               >
                 보유기술
-              </Button>
-              <Button
-                onClick={() => toggleSection("education")}
-                variant={selectedSections.education ? "default" : "outline"}
-                size="sm"
-              >
-                학력
               </Button>
             </div>
             <div className="flex items-center gap-2 text-sm border-r pr-4">
